@@ -1,0 +1,18 @@
+# Cloudflare Pages Redirects
+# Format: /source  /destination  status-code
+
+# Friendly URL aliases
+/portal          /portal.html         302
+/farmers         /farmers.html        302
+/supply-chain    /supply-chain.html   302
+/chain           /supply-chain.html   302
+/dashboard       /portal.html         302
+/login           /portal.html         302
+/track           /supply-chain.html   302
+/products        /index.html#products 302
+/about           /index.html#story    302
+/contact         /index.html#contact  302
+
+# Legacy / common misspellings
+/farmer          /farmers.html        302
+/supply_chain    /supply-chain.html   302

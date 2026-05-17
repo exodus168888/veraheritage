@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Supply Chain Tracker — Vera Heritage</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml"/>
+  <link rel="stylesheet" href="css/main.css"/>
+  <style>
+    .sc-hero {
+      background: linear-gradient(135deg, var(--ink) 0%, var(--purple-900) 60%, var(--purple-800) 100%);
+      padding: calc(var(--nav-h) + 60px) 0 80px;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .sc-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0; right: 0;
+      height: 80px;
+      background: linear-gradient(to bottom, transparent, var(--paper-2));
+    }
+
+    /* Lot tracker */
+    .lot-tracker-wrap {
+      background: var(--paper-2);
+      padding: 64px 0;
+    }
+    .lot-search-bar {
+      display: flex;
+      gap: 12px;
+      max-width: 640px;
+      margin: 0 auto 40px;
+    }
+    .lot-input {
+      flex: 1;
+      padding: 14px 20px;
+      border-radius: var(--radius-full);
+      border: 2px solid var(--paper-3);
+      background: #fff;
+      font-size: 1rem;
+      font-family: var(--font-sans);
+      transition: border-color var(--t-fast);
+    }
+    .lot-input:focus { border-color: var(--purple-400); outline: none; }
+    .lot-result {
+      max-width: 840px;
+      margin: 0 auto;
+      display: none;
+    }
+    .lot-result.active { display: block; }
+
+    /* Full chain visual */
+    .full-chain {
+      background: #fff;
+      padding: 64px 0;
+    }
+    .chain-stage {
+      position: relative;
+    }
+    .stage-card {
+      background: var(--paper);
+      border: 2px solid var(--paper-3);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      transition: all var(--t-base);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .stage-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--paper-3);
+      transition: background var(--t-base);
+    }
+    .stage-card.done::before { background: var(--success); }
+    .stage-card.active::before { background: var(--purple-600); }
+    .stage-card.pending::before { background: var(--paper-3); }
+    .stage-card:hover { border-color: var(--purple-300); box-shadow: var(--shadow-md); }
+    .stage-icon { font-size: 2rem; margin-bottom: 12px; }
+    .stage-num {
+      position: absolute;
+      top: 16px; right: 16px;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .72rem;
+      font-weight: 800;
+    }
+    .stage-num.done { background: var(--success); color: #fff; }
+    .stage-num.active { background: var(--purple-600); color: #fff; box-shadow: 0 0 0 4px var(--purple-100); }
+    .stage-num.pending { background: var(--paper-3); color: var(--ink-300); }
+    .stage-title { font-weight: 700; font-size: .95rem; margin-bottom: 6px; }
+    .stage-desc { font-size: .78rem; color: var(--ink-300); line-height: 1.6; margin-bottom: 12px; }
+    .stage-checks { display: flex; flex-direction: column; gap: 4px; }
+    .stage-check { font-size: .72rem; display: flex; align-items: center; gap: 6px; }
+    .stage-check.ok { color: var(--success); }
+    .stage-check.pending-c { color: var(--ink-100); }
+    .stage-check.active-c { color: var(--purple-600); }
+
+    /* Chain connector arrows (desktop) */
+    .chain-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+      align-items: start;
+      position: relative;
+    }
+    .chain-grid::before {
+      content: '';
+      position: absolute;
+      top: 52px; left: 10%; right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--success) 30%, var(--purple-400) 50%, var(--paper-3) 70%);
+      z-index: 0;
+      border-radius: 2px;
+    }
+    .stage-card { z-index: 1; }
+
+    /* Lot detail card */
+    .lot-detail {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--paper-3);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+    .lot-header {
+      background: linear-gradient(135deg, var(--purple-900), var(--purple-700));
+      padding: 24px 28px;
+      color: #fff;
+    }
+    .lot-id { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 700; }
+    .lot-body { padding: 28px; }
+    .lot-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 24px; }
+    .lot-meta-item .lm-label { font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; color: var(--ink-300); margin-bottom: 4px; }
+    .lot-meta-item .lm-val { font-size: .95rem; font-weight: 700; }
+
+    /* Process details */
+    .process-section { background: var(--paper-2); padding: 64px 0; }
+    .process-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--paper-3);
+      padding: 28px;
+      height: 100%;
+    }
+    .process-icon { font-size: 2rem; margin-bottom: 16px; }
+    .process-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 8px; }
+    .process-body { font-size: .875rem; color: var(--ink-300); line-height: 1.7; }
+    .process-specs { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+    .spec-row { display: flex; justify-content: space-between; font-size: .8rem; padding: 6px 0; border-bottom: 1px solid var(--paper-2); }
+    .spec-row:last-child { border: none; }
+    .spec-key { color: var(--ink-300); }
+    .spec-val { font-weight: 600; }
+
+    /* Quality tests */
+    .test-section { background: #fff; padding: 64px 0; }
+    .test-card {
+      background: var(--paper);
+      border: 1px solid var(--paper-3);
+      border-radius: var(--radius-md);
+      padding: 20px 24px;
+    }
+    .test-name { font-weight: 700; font-size: .9rem; margin-bottom: 4px; }
+    .test-standard { font-size: .72rem; color: var(--ink-300); margin-bottom: 10px; }
+    .test-result { font-size: 1.1rem; font-weight: 800; }
+    .test-result.pass { color: var(--success); }
+    .test-result.warn { color: var(--warning); }
+    .test-badge { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; font-size: .72rem; font-weight: 700; }
+    .test-badge.pass { color: var(--success); }
+
+    /* Cold chain */
+    .cold-section { background: linear-gradient(135deg, #0A2040, #0F3560); padding: 64px 0; color: #fff; }
+    .temp-display {
+      font-family: var(--font-serif);
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: #60C0FF;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .temp-unit { font-size: 1.5rem; color: rgba(96,192,255,.6); }
+    .temp-label { font-size: .8rem; color: rgba(255,255,255,.5); margin-top: 4px; }
+
+    /* Compliance docs section */
+    .compliance-section { background: var(--paper-2); padding: 64px 0; }
+    .compliance-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .compliance-card {
+      background: #fff;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--paper-3);
+      padding: 24px;
+      text-align: center;
+      transition: all var(--t-base);
+    }
+    .compliance-card:hover { border-color: var(--purple-300); transform: translateY(-4px); box-shadow: var(--shadow-md); }
+    .compliance-icon { font-size: 2.5rem; margin-bottom: 12px; }
+    .compliance-name { font-weight: 700; font-size: .95rem; margin-bottom: 6px; }
+    .compliance-desc { font-size: .78rem; color: var(--ink-300); line-height: 1.6; }
+    .compliance-status { margin-top: 14px; }
+
+    @media (max-width: 1199px) {
+      .chain-grid { grid-template-columns: repeat(3, 1fr); }
+      .chain-grid::before { display: none; }
+      .lot-meta-grid { grid-template-columns: repeat(2, 1fr); }
+      .compliance-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 767px) {
+      .chain-grid { grid-template-columns: 1fr 1fr; }
+      .lot-meta-grid { grid-template-columns: 1fr 1fr; }
+      .compliance-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="nav scrolled">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo"><img src="assets/logo.svg" alt="Vera Heritage"/></a>
+    <div class="nav-links">
+      <a href="index.html#story" class="nav-link">Our Story</a>
+      <a href="index.html#products" class="nav-link">Products</a>
+      <a href="farmers.html" class="nav-link">Farmers</a>
+      <a href="supply-chain.html" class="nav-link active">Supply Chain</a>
+      <a href="index.html#contact" class="nav-link">Contact</a>
+    </div>
+    <div class="nav-actions">
+      <a href="portal.html" class="btn btn-primary btn-sm">B2B Portal →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="sc-hero">
+  <div class="container" style="position:relative;z-index:2;">
+    <div class="section-eyebrow" style="color:var(--gold-300);">Supply Chain Tracker</div>
+    <h1 class="display-lg" style="color:#fff;margin-bottom:20px;max-width:700px;">From Bohol's soil<br/>to your facility — <em style="font-style:normal;color:var(--gold-400);">fully traceable.</em></h1>
+    <p class="body-lg" style="color:rgba(255,255,255,.55);max-width:580px;margin-bottom:36px;">
+      Every Vera Heritage batch carries a unique lot number linked to a specific farm, farmer, harvest date, processing facility, lab test, and shipping record. No black boxes.
+    </p>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;">
+      <a href="#lot-tracker" class="btn btn-gold btn-lg">Track a Lot Number</a>
+      <a href="#chain-stages" class="btn btn-outline-white btn-lg">See Full Chain</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     LOT NUMBER TRACKER
+     ============================================================ -->
+<section class="lot-tracker-wrap" id="lot-tracker">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-eyebrow">Lot Traceability</div>
+      <h2 class="h2 section-title">Track any batch by lot number</h2>
+      <p class="body-md text-muted section-subtitle">Enter a Vera Heritage lot number (e.g. KIN-0512) to see the full provenance chain from farm to export.</p>
+    </div>
+
+    <div class="lot-search-bar">
+      <input type="text" class="lot-input" id="lotInput" placeholder="Enter lot number (try: KIN-0512)" onkeydown="if(event.key==='Enter')trackLot()"/>
+      <button class="btn btn-primary btn-lg" onclick="trackLot()">Track →</button>
+    </div>
+
+    <div style="text-align:center;margin-bottom:24px;">
+      <span style="font-size:.78rem;color:var(--ink-300);">Try these: </span>
+      <button class="quick-reply" onclick="document.getElementById('lotInput').value='KIN-0512';trackLot()">KIN-0512</button>
+      <button class="quick-reply" onclick="document.getElementById('lotInput').value='KIN-0508';trackLot()" style="margin-left:8px;">KIN-0508</button>
+      <button class="quick-reply" onclick="document.getElementById('lotInput').value='HAL-0430';trackLot()" style="margin-left:8px;">HAL-0430</button>
+    </div>
+
+    <div class="lot-result" id="lotResult">
+      <div class="lot-detail">
+        <div class="lot-header">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+            <div>
+              <div style="font-size:.72rem;color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;">Lot Number</div>
+              <div class="lot-id" id="lotIdDisplay">KIN-0512</div>
+            </div>
+            <div style="text-align:right;">
+              <span class="badge badge-success badge-dot" id="lotStatusBadge">Active — In Transit</span>
+              <div style="font-size:.72rem;color:rgba(255,255,255,.4);margin-top:6px;" id="lotDateDisplay">Harvested Nov 28, 2025</div>
+            </div>
+          </div>
+        </div>
+        <div class="lot-body">
+          <div class="lot-meta-grid" id="lotMetaGrid">
+            <div class="lot-meta-item"><div class="lm-label">Product</div><div class="lm-val" id="lm-product">Ube Powder Grade A</div></div>
+            <div class="lot-meta-item"><div class="lm-label">Variety</div><div class="lm-val" id="lm-variety">Kinampay (Bohol)</div></div>
+            <div class="lot-meta-item"><div class="lm-label">Farmer</div><div class="lm-val" id="lm-farmer">Rodrigo Magbanua</div></div>
+            <div class="lot-meta-item"><div class="lm-label">Farm Location</div><div class="lm-val" id="lm-location">Carmen, Bohol</div></div>
+            <div class="lot-meta-item"><div class="lm-label">Batch Weight</div><div class="lm-val" id="lm-weight">500 kg</div></div>
+            <div class="lot-meta-item"><div class="lm-label">Processing Facility</div><div class="lm-val" id="lm-facility">Vera Bohol Hub</div></div>
+            <div class="lot-meta-item"><div class="lm-label">Lab Certificate</div><div class="lm-val" id="lm-coa"><span style="color:var(--success);">✓ COA Issued May 14</span></div></div>
+            <div class="lot-meta-item"><div class="lm-label">Export Order</div><div class="lm-val" id="lm-order">VH-2026-042</div></div>
+          </div>
+
+          <!-- Chain steps for this lot -->
+          <div style="margin-top:8px;">
+            <div style="font-weight:700;font-size:.9rem;margin-bottom:14px;">Full Provenance Chain</div>
+            <div class="track-steps" id="lotChainSteps" style="display:flex;align-items:center;gap:0;overflow-x:auto;padding-bottom:8px;">
+              <div class="track-step done"><div class="track-dot">✓</div><div class="track-step-label">Farm</div></div>
+              <div style="flex:1;height:2px;background:var(--purple-300);min-width:20px;"></div>
+              <div class="track-step done"><div class="track-dot">✓</div><div class="track-step-label">Collection</div></div>
+              <div style="flex:1;height:2px;background:var(--purple-300);min-width:20px;"></div>
+              <div class="track-step done"><div class="track-dot">✓</div><div class="track-step-label">Processing</div></div>
+              <div style="flex:1;height:2px;background:var(--purple-300);min-width:20px;"></div>
+              <div class="track-step done"><div class="track-dot">✓</div><div class="track-step-label">Lab Test</div></div>
+              <div style="flex:1;height:2px;background:var(--purple-300);min-width:20px;"></div>
+              <div class="track-step done"><div class="track-dot">✓</div><div class="track-step-label">Cold Store</div></div>
+              <div style="flex:1;height:2px;background:linear-gradient(90deg,var(--purple-300),var(--paper-3));min-width:20px;"></div>
+              <div class="track-step active"><div class="track-dot">✈</div><div class="track-step-label">Export</div></div>
+              <div style="flex:1;height:2px;background:var(--paper-3);min-width:20px;"></div>
+              <div class="track-step"><div class="track-dot">📦</div><div class="track-step-label">Delivered</div></div>
+            </div>
+          </div>
+
+          <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;">
+            <a href="portal.html" class="btn btn-primary btn-sm">Download COA for this lot →</a>
+            <button class="btn btn-outline btn-sm" onclick="window.print()">Print Certificate</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FULL CHAIN STAGES
+     ============================================================ -->
+<section class="full-chain" id="chain-stages">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-eyebrow">The Vera Heritage Chain</div>
+      <h2 class="h2 section-title">6 stages. Zero black boxes.</h2>
+      <p class="body-md text-muted section-subtitle">Every lot is documented, tested, and verified at each stage before moving to the next.</p>
+    </div>
+
+    <div class="chain-grid stagger">
+
+      <div class="stage-card done">
+        <div class="stage-num done">1</div>
+        <div class="stage-icon">🌾</div>
+        <div class="stage-title">Farm & Harvest</div>
+        <div class="stage-desc">Certified partner farmers harvest ube at peak ripeness Nov–Dec. GPS coordinates, farmer ID, and harvest weight recorded at collection.</div>
+        <div class="stage-checks">
+          <div class="stage-check ok">✓ Farmer certification verified</div>
+          <div class="stage-check ok">✓ GPS location logged</div>
+          <div class="stage-check ok">✓ Harvest weight recorded</div>
+          <div class="stage-check ok">✓ Variety confirmed (Kinampay)</div>
+        </div>
+      </div>
+
+      <div class="stage-card done">
+        <div class="stage-num done">2</div>
+        <div class="stage-icon">🚚</div>
+        <div class="stage-title">Collection & Sorting</div>
+        <div class="stage-desc">Raw ube is collected from farms within 12 hours of harvest. Graded on-site: Grade A (Kinampay heritage), Grade B (standard). Rejected material composted.</div>
+        <div class="stage-checks">
+          <div class="stage-check ok">✓ Grade A/B sorting complete</div>
+          <div class="stage-check ok">✓ Lot number assigned</div>
+          <div class="stage-check ok">✓ Cold chain initiated</div>
+          <div class="stage-check ok">✓ Arrival weight logged</div>
+        </div>
+      </div>
+
+      <div class="stage-card done">
+        <div class="stage-num done">3</div>
+        <div class="stage-icon">⚙️</div>
+        <div class="stage-title">Processing & Milling</div>
+        <div class="stage-desc">At our HACCP-certified facility, ube is washed, peeled, sliced, dehydrated, and milled to specification. Moisture content, particle size, and color are measured continuously.</div>
+        <div class="stage-checks">
+          <div class="stage-check ok">✓ HACCP protocol followed</div>
+          <div class="stage-check ok">✓ Moisture: ≤8% achieved</div>
+          <div class="stage-check ok">✓ No fillers added</div>
+          <div class="stage-check ok">✓ Batch weight confirmed</div>
+        </div>
+      </div>
+
+      <div class="stage-card done">
+        <div class="stage-num done">4</div>
+        <div class="stage-icon">🧬</div>
+        <div class="stage-title">Laboratory Testing</div>
+        <div class="stage-desc">Every batch is tested by an accredited third-party lab before release. Tests include microbiology, heavy metals, pesticide residues, moisture, color (anthocyanin), and allergens.</div>
+        <div class="stage-checks">
+          <div class="stage-check ok">✓ Microbiology: PASS</div>
+          <div class="stage-check ok">✓ Heavy metals: PASS</div>
+          <div class="stage-check ok">✓ Pesticide residues: PASS</div>
+          <div class="stage-check ok">✓ COA issued &amp; uploaded</div>
+        </div>
+      </div>
+
+      <div class="stage-card active">
+        <div class="stage-num active">5</div>
+        <div class="stage-icon">❄️</div>
+        <div class="stage-title">Cold Storage & Packaging</div>
+        <div class="stage-desc">Certified batches are packed in export-compliant packaging (25 kg / 50 kg / 1 MT FIBC bags) with lot-number labels and stored in our temperature-controlled warehouse until dispatch.</div>
+        <div class="stage-checks">
+          <div class="stage-check active-c">→ Packaging complete</div>
+          <div class="stage-check active-c">→ Storage temp: 18–22°C</div>
+          <div class="stage-check active-c">→ Lot labels affixed</div>
+          <div class="stage-check pending-c">○ Dispatch pending</div>
+        </div>
+      </div>
+
+      <div class="stage-card pending">
+        <div class="stage-num pending">6</div>
+        <div class="stage-icon">✈️</div>
+        <div class="stage-title">Export & Delivery</div>
+        <div class="stage-desc">Phytosanitary certification, FDA clearance, Bill of Lading, and all export documentation prepared. Air or sea freight to buyer's port. Real-time tracking shared via portal.</div>
+        <div class="stage-checks">
+          <div class="stage-check pending-c">○ Phytosanitary cert</div>
+          <div class="stage-check pending-c">○ FDA clearance</div>
+          <div class="stage-check pending-c">○ AWB / BOL issued</div>
+          <div class="stage-check pending-c">○ Buyer confirmation</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PROCESSING DETAILS
+     ============================================================ -->
+<section class="process-section">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-eyebrow">Processing Standards</div>
+      <h2 class="h2 section-title">How we process ube powder</h2>
+    </div>
+    <div class="grid-3 stagger" style="align-items:start;">
+      <div class="process-card">
+        <div class="process-icon">🪣</div>
+        <div class="process-title">Washing & Preparation</div>
+        <div class="process-body">Fresh ube is triple-washed with food-grade water, manually peeled, and sliced to uniform 5mm thickness within 4 hours of collection to prevent oxidation.</div>
+        <div class="process-specs">
+          <div class="spec-row"><div class="spec-key">Wash standard</div><div class="spec-val">Food-grade</div></div>
+          <div class="spec-row"><div class="spec-key">Slice thickness</div><div class="spec-val">5mm ± 0.5mm</div></div>
+          <div class="spec-row"><div class="spec-key">Max time to process</div><div class="spec-val">4 hours</div></div>
+          <div class="spec-row"><div class="spec-key">Oxidation control</div><div class="spec-val">Citric acid dip</div></div>
+        </div>
+      </div>
+      <div class="process-card">
+        <div class="process-icon">🌡️</div>
+        <div class="process-title">Dehydration</div>
+        <div class="process-body">Slices are dehydrated in our tunnel dryer at controlled temperatures to preserve anthocyanin pigment, aroma compounds, and nutritional content — never bleached or color-enhanced.</div>
+        <div class="process-specs">
+          <div class="spec-row"><div class="spec-key">Dryer type</div><div class="spec-val">Tunnel / tray dryer</div></div>
+          <div class="spec-row"><div class="spec-key">Temperature</div><div class="spec-val">55–65°C</div></div>
+          <div class="spec-row"><div class="spec-key">Duration</div><div class="spec-val">10–14 hours</div></div>
+          <div class="spec-row"><div class="spec-key">Target moisture</div><div class="spec-val">≤8% w/w</div></div>
+        </div>
+      </div>
+      <div class="process-card">
+        <div class="process-icon">⚙️</div>
+        <div class="process-title">Milling & Sifting</div>
+        <div class="process-body">Dried ube is milled to buyer specification (fine powder or coarse flour) and sifted for uniformity. Zero additives, fillers, or maltodextrin — confirmed by COA.</div>
+        <div class="process-specs">
+          <div class="spec-row"><div class="spec-key">Standard mesh</div><div class="spec-val">80–200 mesh</div></div>
+          <div class="spec-row"><div class="spec-key">Particle size</div><div class="spec-val">75–180 µm</div></div>
+          <div class="spec-row"><div class="spec-key">Additives</div><div class="spec-val">None — 100% pure</div></div>
+          <div class="spec-row"><div class="spec-key">Custom spec</div><div class="spec-val">Available on request</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     LABORATORY TESTS
+     ============================================================ -->
+<section class="test-section">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-eyebrow">Quality Assurance</div>
+      <h2 class="h2 section-title">Third-party lab results — Batch KIN-0512</h2>
+      <p class="body-md text-muted section-subtitle">Lab: PhilFood Analytics Inc. · Date issued: May 14, 2026 · Accreditation: ISO 17025</p>
+    </div>
+    <div class="grid-4 stagger" style="align-items:start;">
+      <div class="test-card">
+        <div class="test-name">Total Plate Count</div>
+        <div class="test-standard">Standard: &lt;10,000 CFU/g</div>
+        <div class="test-result pass">&lt;500 CFU/g</div>
+        <div class="test-badge pass">✓ PASS — Excellent</div>
+      </div>
+      <div class="test-card">
+        <div class="test-name">Yeast &amp; Mould</div>
+        <div class="test-standard">Standard: &lt;100 CFU/g</div>
+        <div class="test-result pass">&lt;10 CFU/g</div>
+        <div class="test-badge pass">✓ PASS</div>
+      </div>
+      <div class="test-card">
+        <div class="test-name">E. coli</div>
+        <div class="test-standard">Standard: Not detected</div>
+        <div class="test-result pass">Not Detected</div>
+        <div class="test-badge pass">✓ PASS</div>
+      </div>
+      <div class="test-card">
+        <div class="test-name">Salmonella</div>
+        <div class="test-standard">Standard: Not detected (25g)</div>
+        <div class="test-result pass">Not Detected</div>
+        <div class="test-badge pass">✓ PASS</div>
+      </div>
+      <div class="test-card">
+        <div class="test-name">Lead (Pb)</div>
+        <div class="test-standard">Limit: ≤0.3 mg/kg (EU)</div>
+        <div class="test-result pass">0.04 mg/kg</div>
+        <div class="test-badge pass">✓ PASS</div>
+      </div>
+      <div class="test-card">
+        <div class="test-name">Arsenic (As)</div>
+        <div class="test-standard">Limit: ≤0.1 mg/kg</div>
+        <div class="test-result pass">0.02 mg/kg</div>
+        <div class="test-badge pass">✓ PASS</div>
+      </div>
+      <div class="test-card">
+        <div class="test-name">Moisture Content</div>
+        <div class="test-standard">Spec: ≤8% w/w</div>
+        <div class="test-result pass">6.4%</div>
+        <div class="test-badge pass">✓ PASS</div>
+      </div>
+      <div class="test-card">
+        <div class="test-name">Anthocyanin (Color)</div>
+        <div class="test-standard">Min: 50 mg/100g (Grade A)</div>
+        <div class="test-result pass">127 mg/100g</div>
+        <div class="test-badge pass">✓ PASS — Premium</div>
+      </div>
+      <div class="test-card">
+        <div class="test-name">Pesticide Residues</div>
+        <div class="test-standard">MRL: Codex / EU standards</div>
+        <div class="test-result pass">Not Detected</div>
+        <div class="test-badge pass">✓ PASS</div>
+      </div>
+      <div class="test-card">
+        <div class="test-name">Starch Content</div>
+        <div class="test-standard">Spec: ≥70% dry basis</div>
+        <div class="test-result pass">78.4%</div>
+        <div class="test-badge pass">✓ PASS</div>
+      </div>
+      <div class="test-card">
+        <div class="test-name">Protein Content</div>
+        <div class="test-standard">Reference: nutritional</div>
+        <div class="test-result pass">4.8 g/100g</div>
+        <div class="test-badge pass">✓ Recorded</div>
+      </div>
+      <div class="test-card">
+        <div class="test-name">Added Fillers / Starch</div>
+        <div class="test-standard">Spec: None (maltodextrin etc)</div>
+        <div class="test-result pass">Not Detected</div>
+        <div class="test-badge pass">✓ 100% Pure</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:32px;">
+      <a href="portal.html" class="btn btn-primary btn-lg">Download Full COA →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     COLD CHAIN
+     ============================================================ -->
+<section class="cold-section">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-eyebrow" style="color:var(--gold-300);">Cold Chain Management</div>
+      <h2 class="h2 section-title" style="color:#fff;">Temperature integrity,<br/>harvest to delivery.</h2>
+    </div>
+    <div class="grid-3 stagger">
+      <div style="text-align:center;padding:32px 24px;background:rgba(255,255,255,.06);border-radius:var(--radius-lg);border:1px solid rgba(255,255,255,.1);">
+        <div class="temp-display" style="justify-content:center;"><span>-18</span><span class="temp-unit">°C</span></div>
+        <div class="temp-label">IQF Frozen Puree Storage</div>
+        <div style="margin-top:16px;font-size:.8rem;color:rgba(255,255,255,.4);">Continuous temperature logging<br/>Alarm threshold: ±2°C</div>
+      </div>
+      <div style="text-align:center;padding:32px 24px;background:rgba(255,255,255,.06);border-radius:var(--radius-lg);border:1px solid rgba(255,255,255,.1);">
+        <div class="temp-display" style="justify-content:center;"><span>18–22</span><span class="temp-unit">°C</span></div>
+        <div class="temp-label">Ube Powder Storage (Dry)</div>
+        <div style="margin-top:16px;font-size:.8rem;color:rgba(255,255,255,.4);">Humidity controlled ≤60% RH<br/>Nitrogen-flushed packaging</div>
+      </div>
+      <div style="text-align:center;padding:32px 24px;background:rgba(255,255,255,.06);border-radius:var(--radius-lg);border:1px solid rgba(255,255,255,.1);">
+        <div class="temp-display" style="justify-content:center;"><span>&lt;25</span><span class="temp-unit">°C</span></div>
+        <div class="temp-label">Transit — Air / Sea Freight</div>
+        <div style="margin-top:16px;font-size:.8rem;color:rgba(255,255,255,.4);">Temperature data loggers<br/>in every shipment</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     COMPLIANCE DOCS
+     ============================================================ -->
+<section class="compliance-section">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-eyebrow">Compliance Framework</div>
+      <h2 class="h2 section-title">All documents. Every batch.</h2>
+    </div>
+    <div class="compliance-grid stagger">
+      <div class="compliance-card">
+        <div class="compliance-icon">🧬</div>
+        <div class="compliance-name">Certificate of Analysis (COA)</div>
+        <div class="compliance-desc">Third-party accredited lab COA covering microbiology, heavy metals, pesticides, moisture, color, and nutritional values. Issued per batch.</div>
+        <div class="compliance-status"><span class="badge badge-success badge-dot">Issued per batch</span></div>
+      </div>
+      <div class="compliance-card">
+        <div class="compliance-icon">🏭</div>
+        <div class="compliance-name">HACCP Certificate</div>
+        <div class="compliance-desc">Hazard Analysis & Critical Control Points certification for all processing facilities. Audited annually by third-party auditors.</div>
+        <div class="compliance-status"><span class="badge badge-success badge-dot">Valid 2025–2027</span></div>
+      </div>
+      <div class="compliance-card">
+        <div class="compliance-icon">🏥</div>
+        <div class="compliance-name">Philippine FDA Registration</div>
+        <div class="compliance-desc">All ube powder, puree, and finished product SKUs are registered with the Philippine Food & Drug Administration.</div>
+        <div class="compliance-status"><span class="badge badge-success badge-dot">Active Registration</span></div>
+      </div>
+      <div class="compliance-card">
+        <div class="compliance-icon">🌱</div>
+        <div class="compliance-name">Phytosanitary Certificate</div>
+        <div class="compliance-desc">Bureau of Plant Industry (BPI) phytosanitary certificates for fresh ube and product shipments. Required for most export destinations.</div>
+        <div class="compliance-status"><span class="badge badge-success badge-dot">Per shipment</span></div>
+      </div>
+      <div class="compliance-card">
+        <div class="compliance-icon">⚠️</div>
+        <div class="compliance-name">Allergen Declaration</div>
+        <div class="compliance-desc">Full allergen absence declaration (top 14 EU allergens) for all product lines. Ube powder is naturally allergen-free.</div>
+        <div class="compliance-status"><span class="badge badge-success badge-dot">All products</span></div>
+      </div>
+      <div class="compliance-card">
+        <div class="compliance-icon">📦</div>
+        <div class="compliance-name">Lot-Numbered Packaging</div>
+        <div class="compliance-desc">Every bag is lot-numbered, dated, and export-compliant. Nutritional panels in US, EU, and PH format available. Private label available.</div>
+        <div class="compliance-status"><span class="badge badge-success badge-dot">Standard</span></div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:48px;">
+      <p style="color:var(--ink-300);margin-bottom:24px;font-size:.9rem;">Need additional certifications? Organic, Halal, Kosher, FSSC 22000 in progress for 2026.</p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+        <a href="portal.html" class="btn btn-primary btn-lg">Access Full Document Vault →</a>
+        <a href="index.html#contact" class="btn btn-outline btn-lg">Request Samples & Docs</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Chatbot -->
+<button class="chatbot-trigger" id="chatTrigger" onclick="toggleChat()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+</button>
+<div class="chatbot-window" id="chatWindow">
+  <div class="chatbot-head">
+    <div class="chatbot-head-avatar">🌿</div>
+    <div class="chatbot-head-info"><div class="name">Vera AI Assistant</div><div class="status">Online</div></div>
+    <button class="chatbot-head-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chatbot-messages" id="chatMessages"></div>
+  <div class="chatbot-quick" id="quickReplies">
+    <button class="quick-reply" onclick="sendQuick('What certifications do you provide?')">Certifications</button>
+    <button class="quick-reply" onclick="sendQuick('How do I track my shipment?')">Track shipment</button>
+    <button class="quick-reply" onclick="sendQuick('What lab tests are done?')">Lab tests</button>
+  </div>
+  <div class="chatbot-input-row">
+    <input type="text" class="chatbot-input" id="chatInput" placeholder="Ask about traceability, certs, processing…" onkeydown="if(event.key==='Enter')sendChat()"/>
+    <button class="chatbot-send" onclick="sendChat()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;">
+      <img src="assets/logo.svg" alt="Vera Heritage" style="height:44px;filter:brightness(0) invert(1);opacity:.7;"/>
+      <span style="font-size:.8rem;color:rgba(255,255,255,.3);">© 2026 Vera Heritage · Purple is the New Gold ™</span>
+      <a href="index.html" style="color:rgba(255,255,255,.4);font-size:.8rem;">← Back to main site</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/app.js"></script>
+<script src="js/chatbot.js"></script>
+<script>
+  const lotData = {
+    'KIN-0512': {
+      status: 'Active — In Transit', date: 'Harvested Nov 28, 2025',
+      product:'Ube Powder Grade A', variety:'Kinampay (Bohol)', farmer:'Rodrigo Magbanua',
+      location:'Carmen, Bohol', weight:'500 kg', facility:'Vera Bohol Hub',
+      coa:'<span style="color:var(--success);">✓ COA Issued May 14</span>', order:'VH-2026-042',
+      progress: 5
+    },
+    'KIN-0508': {
+      status: 'Processing', date: 'Harvested Nov 22, 2025',
+      product:'Frozen Ube Puree', variety:'Kinampay (Bohol)', farmer:'Maria Dela Cruz',
+      location:'Tagbilaran, Bohol', weight:'1,200 kg', facility:'Vera Bohol Hub',
+      coa:'<span style="color:var(--warning);">⏳ Pending lab results</span>', order:'VH-2026-039',
+      progress: 3
+    },
+    'HAL-0430': {
+      status: 'Quality Check', date: 'Produced Apr 29, 2026',
+      product:'Ube Halaya — Retail Jars', variety:'Kinampay blend', farmer:'Multiple (Bohol)',
+      location:'Manila Production', weight:'300 units (350g)', facility:'Manila Kitchen',
+      coa:'<span style="color:var(--purple-600);">🔬 In quality review</span>', order:'VH-2026-035',
+      progress: 4
+    }
+  };
+
+  function trackLot() {
+    const val = document.getElementById('lotInput').value.trim().toUpperCase();
+    const data = lotData[val];
+    const resultEl = document.getElementById('lotResult');
+    if (data) {
+      document.getElementById('lotIdDisplay').textContent = val;
+      document.getElementById('lotStatusBadge').textContent = data.status;
+      document.getElementById('lotDateDisplay').textContent = data.date;
+      document.getElementById('lm-product').textContent = data.product;
+      document.getElementById('lm-variety').textContent = data.variety;
+      document.getElementById('lm-farmer').textContent = data.farmer;
+      document.getElementById('lm-location').textContent = data.location;
+      document.getElementById('lm-weight').textContent = data.weight;
+      document.getElementById('lm-facility').textContent = data.facility;
+      document.getElementById('lm-coa').innerHTML = data.coa;
+      document.getElementById('lm-order').textContent = data.order;
+      resultEl.classList.add('active');
+      resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+      resultEl.classList.remove('active');
+      alert('Lot number not found. Try KIN-0512, KIN-0508, or HAL-0430');
+    }
+  }
+</script>
+</body>
+</html>

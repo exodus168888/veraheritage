@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Farmer Network — Vera Heritage</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml"/>
+  <link rel="stylesheet" href="css/main.css"/>
+  <style>
+    .farmers-hero {
+      background: linear-gradient(135deg, var(--purple-950), var(--purple-800));
+      padding: calc(var(--nav-h) + 60px) 0 80px;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .farmers-hero::before {
+      content: '';
+      position: absolute;
+      top: -100px; right: -100px;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,168,76,.12), transparent 70%);
+    }
+
+    /* Map */
+    .map-section { background: var(--paper-2); padding: 64px 0; }
+    .ph-map-wrap {
+      position: relative;
+      display: flex;
+      gap: 32px;
+      align-items: flex-start;
+    }
+    .ph-map-svg-wrap {
+      flex-shrink: 0;
+      width: 360px;
+    }
+    .map-legend { font-size: .75rem; color: var(--ink-300); margin-top: 16px; }
+    .map-legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .map-legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+
+    .region-info {
+      flex: 1;
+      background: #fff;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--paper-3);
+      padding: 28px;
+      min-height: 400px;
+    }
+    .region-info-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--ink-100); text-align: center; gap: 12px; padding: 60px 40px; }
+    .region-info-content { display: none; }
+    .region-info-content.active { display: block; }
+
+    /* Farmer cards */
+    .farmer-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--paper-3);
+      padding: 24px 28px;
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      transition: all var(--t-base);
+      cursor: pointer;
+    }
+    .farmer-card:hover { border-color: var(--purple-300); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+    .farmer-avatar {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--purple-300), var(--gold-300));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+    .farmer-name { font-weight: 700; font-size: 1rem; margin-bottom: 2px; }
+    .farmer-location { font-size: .8rem; color: var(--ink-300); margin-bottom: 8px; }
+    .farmer-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .farmer-meta { margin-left: auto; text-align: right; flex-shrink: 0; }
+    .farmer-yield { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; color: var(--purple-600); }
+    .farmer-yield-label { font-size: .7rem; color: var(--ink-300); }
+    .farmer-detail {
+      display: none;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--paper-2);
+    }
+    .farmer-card.expanded .farmer-detail { display: block; }
+    .detail-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; }
+    .detail-item .d-label { font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; color: var(--ink-300); margin-bottom: 4px; }
+    .detail-item .d-val { font-size: .9rem; font-weight: 600; }
+
+    /* Quality gauge */
+    .quality-gauge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .gauge-stars { color: var(--gold-500); font-size: 1rem; }
+    .gauge-label { font-size: .78rem; color: var(--ink-300); }
+
+    /* Harvest calendar */
+    .harvest-cal { background: var(--paper); padding: 64px 0; }
+    .cal-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; }
+    .cal-month { text-align: center; }
+    .cal-month-label { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-300); margin-bottom: 6px; }
+    .cal-bar-wrap { height: 80px; display: flex; flex-direction: column; justify-content: flex-end; }
+    .cal-bar {
+      width: 100%;
+      border-radius: 4px 4px 0 0;
+      transition: all var(--t-base);
+      cursor: pointer;
+      position: relative;
+    }
+    .cal-bar:hover { filter: brightness(1.1); }
+    .cal-bar.harvest { background: var(--purple-600); }
+    .cal-bar.peak { background: var(--gold-500); }
+    .cal-bar.low { background: var(--purple-200); }
+    .cal-bar.none { background: var(--paper-3); height: 8px !important; }
+    .cal-vol { font-size: .65rem; font-weight: 700; color: var(--ink-300); text-align: center; margin-top: 4px; }
+
+    /* Stats row */
+    .network-stats { background: var(--purple-900); padding: 48px 0; }
+    .network-stat { text-align: center; color: #fff; }
+    .network-stat-num { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 700; color: var(--gold-400); }
+    .network-stat-label { font-size: .8rem; color: rgba(255,255,255,.5); margin-top: 4px; }
+
+    /* Variety comparison */
+    .variety-section { background: var(--paper-2); padding: 64px 0; }
+    .variety-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      border: 2px solid var(--paper-3);
+      padding: 28px;
+      transition: all var(--t-base);
+    }
+    .variety-card.premium { border-color: var(--gold-400); }
+    .variety-icon { font-size: 2.5rem; margin-bottom: 16px; }
+    .variety-name { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 700; margin-bottom: 4px; }
+    .variety-origin { font-size: .8rem; color: var(--ink-300); margin-bottom: 16px; }
+    .variety-attrs { display: flex; flex-direction: column; gap: 12px; }
+    .attr-row { display: flex; align-items: center; gap: 8px; }
+    .attr-label { font-size: .75rem; color: var(--ink-300); width: 90px; flex-shrink: 0; }
+    .attr-bar-wrap { flex: 1; }
+    .attr-bar { height: 5px; border-radius: 3px; background: var(--paper-2); overflow: hidden; }
+    .attr-fill { height: 100%; border-radius: 3px; background: var(--purple-500); }
+    .attr-fill.gold { background: var(--gold-500); }
+    .attr-score { font-size: .75rem; font-weight: 700; color: var(--purple-700); width: 28px; text-align: right; }
+
+    /* Farmer join CTA */
+    .farmer-cta { background: linear-gradient(135deg, var(--purple-900), var(--purple-700)); padding: 80px 0; text-align: center; color: #fff; }
+
+    @media (max-width: 767px) {
+      .ph-map-wrap { flex-direction: column; }
+      .ph-map-svg-wrap { width: 100%; }
+      .detail-grid { grid-template-columns: 1fr 1fr; }
+      .cal-grid { grid-template-columns: repeat(6, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     NAV
+     ============================================================ -->
+<nav class="nav scrolled" id="mainNav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo"><img src="assets/logo.svg" alt="Vera Heritage"/></a>
+    <div class="nav-links">
+      <a href="index.html#story" class="nav-link">Our Story</a>
+      <a href="index.html#products" class="nav-link">Products</a>
+      <a href="farmers.html" class="nav-link active">Farmers</a>
+      <a href="supply-chain.html" class="nav-link">Supply Chain</a>
+      <a href="index.html#contact" class="nav-link">Contact</a>
+    </div>
+    <div class="nav-actions">
+      <a href="portal.html" class="btn btn-primary btn-sm">B2B Portal →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="farmers-hero">
+  <div class="container" style="position:relative;z-index:2;">
+    <div class="section-eyebrow" style="color:var(--gold-300);">Farmer Network</div>
+    <h1 class="display-lg" style="color:#fff;margin-bottom:20px;max-width:680px;">The hands behind<br/>every harvest.</h1>
+    <p class="body-lg" style="color:rgba(255,255,255,.55);max-width:560px;margin-bottom:36px;">
+      Vera Heritage partners with certified ube farmers across Bohol, Batangas, Benguet, and beyond. Track provenance, harvest data, quality grades, and farmer impact — in real time.
+    </p>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;">
+      <a href="#farmer-registry" class="btn btn-gold">View Farmer Registry</a>
+      <a href="#map" class="btn btn-outline-white">Interactive Map</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     NETWORK STATS
+     ============================================================ -->
+<section class="network-stats">
+  <div class="container">
+    <div class="grid-4 stagger">
+      <div class="network-stat">
+        <div class="network-stat-num counter" data-target="48">0</div>
+        <div class="network-stat-label">Registered Farmer Partners</div>
+      </div>
+      <div class="network-stat">
+        <div class="network-stat-num counter" data-target="6">0</div>
+        <div class="network-stat-label">Philippine Provinces</div>
+      </div>
+      <div class="network-stat">
+        <div class="network-stat-num">14,200<span style="font-size:1rem;"> kg</span></div>
+        <div class="network-stat-label">2025 Harvest Secured</div>
+      </div>
+      <div class="network-stat">
+        <div class="network-stat-num">2.8×</div>
+        <div class="network-stat-label">Avg. Premium vs. Market Price</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     INTERACTIVE MAP
+     ============================================================ -->
+<section class="map-section" id="map">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">Interactive Map</div>
+      <h2 class="h2 section-title">Ube farming regions across the Philippines</h2>
+      <p class="body-md text-muted section-subtitle">Click a region marker to explore local farmers, harvest data, and variety details.</p>
+    </div>
+
+    <div class="ph-map-wrap">
+      <!-- Philippines SVG Map -->
+      <div class="ph-map-svg-wrap">
+        <svg viewBox="0 0 340 600" xmlns="http://www.w3.org/2000/svg" id="phMap">
+          <!-- Luzon — simplified outline -->
+          <path class="map-region" id="luzon" d="M 130,20 C 140,18 155,22 165,30 C 175,38 180,50 178,65 C 176,80 170,90 168,100 C 176,108 185,115 188,128 C 192,142 188,155 182,162 C 195,168 205,175 208,185 C 212,198 208,212 200,220 C 210,225 218,232 220,242 C 222,252 218,264 210,270 C 218,276 224,284 222,295 C 220,305 212,312 204,315 C 208,325 210,335 206,344 C 202,352 194,356 186,356 C 178,372 170,382 158,384 C 146,386 135,380 130,372 C 120,376 110,378 100,374 C 90,370 84,360 84,348 C 76,344 68,338 66,328 C 64,318 68,308 76,302 C 70,294 68,284 72,275 C 76,266 84,260 92,258 C 88,248 86,238 90,228 C 94,218 102,212 112,210 C 106,200 102,190 104,180 C 106,170 114,162 124,160 C 118,148 116,136 120,124 C 124,112 134,104 146,102 C 138,90 130,78 128,66 C 126,54 128,40 130,20 Z" onclick="showRegion('luzon')"/>
+          <!-- Mindoro -->
+          <path class="map-region" d="M 68,320 C 76,316 84,318 90,324 C 96,330 98,338 96,346 C 94,354 88,360 80,362 C 72,364 64,358 62,350 C 58,342 60,330 68,320 Z" onclick="showRegion('luzon')"/>
+          <!-- Palawan (simplified long island) -->
+          <path class="map-region" d="M 20,360 C 26,350 34,346 40,348 C 46,350 50,358 52,366 C 54,376 52,386 48,392 C 44,398 36,400 30,396 C 24,392 18,382 18,372 C 18,366 18,362 20,360 Z" onclick="showRegion('palawan')"/>
+
+          <!-- Visayas group -->
+          <!-- Cebu & Bohol area (key ube region) -->
+          <ellipse class="map-region" id="visayas" cx="192" cy="382" rx="28" ry="18" onclick="showRegion('bohol')"/>
+          <!-- Samar / Leyte -->
+          <path class="map-region" d="M 228,345 C 238,340 250,342 258,350 C 266,358 268,370 264,380 C 260,390 250,396 240,396 C 230,396 220,390 216,382 C 212,372 214,360 222,352 C 224,349 226,347 228,345 Z" onclick="showRegion('leyte')"/>
+          <!-- Panay -->
+          <ellipse class="map-region" cx="148" cy="390" rx="22" ry="14" onclick="showRegion('visayas')"/>
+          <!-- Negros -->
+          <path class="map-region" d="M 168,395 C 174,388 182,386 188,390 C 194,394 196,404 192,414 C 188,424 178,430 170,428 C 162,426 158,416 160,406 C 161,401 164,398 168,395 Z" onclick="showRegion('visayas')"/>
+
+          <!-- Mindanao -->
+          <path class="map-region" id="mindanao" d="M 150,450 C 162,440 178,436 194,438 C 210,440 226,448 238,460 C 250,472 256,486 254,500 C 252,514 244,524 232,528 C 242,534 250,542 248,552 C 246,562 236,568 224,566 C 212,564 202,556 196,546 C 188,554 178,560 166,558 C 154,556 144,546 140,534 C 132,540 122,544 112,540 C 102,536 96,524 98,512 C 100,500 108,490 118,486 C 114,474 116,462 124,454 C 132,446 142,447 150,450 Z" onclick="showRegion('mindanao')"/>
+
+          <!-- Farmer markers -->
+          <!-- Bohol (Kinampay - PREMIUM) -->
+          <g class="farmer-marker" onclick="showRegion('bohol')" transform="translate(192,382)">
+            <circle class="marker-circle" r="13" fill="#C9A84C" stroke="#fff" stroke-width="2.5"/>
+            <text class="marker-label" text-anchor="middle" dy="4" font-size="8" font-weight="800" fill="white">BOHOL</text>
+          </g>
+
+          <!-- Batangas / Luzon south -->
+          <g class="farmer-marker" onclick="showRegion('batangas')" transform="translate(168,295)">
+            <circle class="marker-circle" r="11" fill="#6B35A8" stroke="#fff" stroke-width="2.5"/>
+            <text class="marker-label" text-anchor="middle" dy="4" font-size="7" font-weight="800" fill="white">BTG</text>
+          </g>
+
+          <!-- Benguet / Cordillera -->
+          <g class="farmer-marker" onclick="showRegion('benguet')" transform="translate(148,130)">
+            <circle class="marker-circle" r="11" fill="#6B35A8" stroke="#fff" stroke-width="2.5"/>
+            <text class="marker-label" text-anchor="middle" dy="4" font-size="7" font-weight="800" fill="white">BNG</text>
+          </g>
+
+          <!-- Quezon Province -->
+          <g class="farmer-marker" onclick="showRegion('quezon')" transform="translate(196,248)">
+            <circle class="marker-circle" r="10" fill="#8B5BC7" stroke="#fff" stroke-width="2"/>
+            <text class="marker-label" text-anchor="middle" dy="4" font-size="7" font-weight="800" fill="white">QZN</text>
+          </g>
+
+          <!-- Leyte -->
+          <g class="farmer-marker" onclick="showRegion('leyte')" transform="translate(244,370)">
+            <circle class="marker-circle" r="10" fill="#8B5BC7" stroke="#fff" stroke-width="2"/>
+            <text class="marker-label" text-anchor="middle" dy="4" font-size="7" font-weight="800" fill="white">LYT</text>
+          </g>
+
+          <!-- Bukidnon / Mindanao -->
+          <g class="farmer-marker" onclick="showRegion('bukidnon')" transform="translate(196,490)">
+            <circle class="marker-circle" r="10" fill="#8B5BC7" stroke="#fff" stroke-width="2"/>
+            <text class="marker-label" text-anchor="middle" dy="4" font-size="7" font-weight="800" fill="white">BKD</text>
+          </g>
+
+          <!-- North label -->
+          <text x="170" y="12" text-anchor="middle" font-size="8" fill="#7A6E8A" font-family="Inter, sans-serif" font-weight="600" letter-spacing="2">PHILIPPINES</text>
+          <text x="310" y="50" font-size="6" fill="#B8B0C4" font-family="Inter, sans-serif">N ↑</text>
+        </svg>
+
+        <div class="map-legend">
+          <div class="map-legend-item"><div class="map-legend-dot" style="background:var(--gold-500)"></div>Premium Heritage (Kinampay)</div>
+          <div class="map-legend-item"><div class="map-legend-dot" style="background:var(--purple-600)"></div>Standard Certified Farms</div>
+          <div class="map-legend-item"><div class="map-legend-dot" style="background:var(--purple-400)"></div>Partner Development Region</div>
+        </div>
+      </div>
+
+      <!-- Region info panel -->
+      <div class="region-info" id="regionInfo">
+        <div class="region-info-placeholder" id="regionPlaceholder">
+          <div style="font-size:3rem;">🗺️</div>
+          <div class="h4">Click a region</div>
+          <p class="body-sm text-muted">Select any marker on the map to explore farmers, harvest data, variety and quality details for that region.</p>
+        </div>
+
+        <!-- Bohol -->
+        <div class="region-info-content" id="region-bohol">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+            <div style="font-size:2rem;">🏝️</div>
+            <div>
+              <div class="h3">Bohol Province</div>
+              <div style="font-size:.8rem;color:var(--ink-300);">Central Visayas — Premium Heritage Zone</div>
+            </div>
+            <span class="badge badge-gold" style="margin-left:auto;">⭐ Top Tier</span>
+          </div>
+          <div class="detail-grid" style="grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+            <div class="detail-item"><div class="d-label">Farmers</div><div class="d-val">18</div></div>
+            <div class="detail-item"><div class="d-label">Variety</div><div class="d-val">Kinampay</div></div>
+            <div class="detail-item"><div class="d-label">2025 Yield</div><div class="d-val">6,200 kg</div></div>
+            <div class="detail-item"><div class="d-label">Grade</div><div class="d-val">A / Premium</div></div>
+            <div class="detail-item"><div class="d-label">Farmgate Price</div><div class="d-val">₱120–150/kg</div></div>
+            <div class="detail-item"><div class="d-label">Harvest Season</div><div class="d-val">Nov–Dec</div></div>
+          </div>
+          <div class="quality-gauge" style="margin-bottom:16px;">
+            <div class="gauge-stars">★★★★★</div>
+            <div class="gauge-label">Quality Score: 98/100 — Unmatched aroma, deep violet, zero fillers</div>
+          </div>
+          <p class="body-sm text-muted">Bohol Kinampay is Vera Heritage's flagship variety — the only true Philippine heirloom ube with documented genetic provenance. Ideal volcanic soil conditions, centuries of cultivation knowledge, and our highest direct farmgate premium program make this region the gold standard.</p>
+          <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+            <span class="badge badge-success badge-dot">COA Certified</span>
+            <span class="badge badge-purple">HACCP Compliant</span>
+            <span class="badge badge-gold">Golden Seal</span>
+          </div>
+        </div>
+
+        <!-- Batangas -->
+        <div class="region-info-content" id="region-batangas">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+            <div style="font-size:2rem;">🌋</div>
+            <div>
+              <div class="h3">Batangas Province</div>
+              <div style="font-size:.8rem;color:var(--ink-300);">Luzon — Heritage Kinampay Region</div>
+            </div>
+            <span class="badge badge-purple" style="margin-left:auto;">Grade A</span>
+          </div>
+          <div class="detail-grid" style="grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+            <div class="detail-item"><div class="d-label">Farmers</div><div class="d-val">9</div></div>
+            <div class="detail-item"><div class="d-label">Variety</div><div class="d-val">Kinampay</div></div>
+            <div class="detail-item"><div class="d-label">2025 Yield</div><div class="d-val">2,800 kg</div></div>
+            <div class="detail-item"><div class="d-label">Grade</div><div class="d-val">A</div></div>
+            <div class="detail-item"><div class="d-label">Farmgate Price</div><div class="d-val">₱100–130/kg</div></div>
+            <div class="detail-item"><div class="d-label">Harvest Season</div><div class="d-val">Nov–Jan</div></div>
+          </div>
+          <div class="quality-gauge" style="margin-bottom:16px;">
+            <div class="gauge-stars">★★★★☆</div>
+            <div class="gauge-label">Quality Score: 91/100 — Strong aroma, good pigmentation</div>
+          </div>
+          <p class="body-sm text-muted">Batangas is one of the Philippines' oldest Kinampay cultivation zones. Rich volcanic soil from Taal influences the flavor profile, producing ube with a distinctive sweetness profile sought after by halaya and jam producers.</p>
+        </div>
+
+        <!-- Benguet -->
+        <div class="region-info-content" id="region-benguet">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+            <div style="font-size:2rem;">🏔️</div>
+            <div>
+              <div class="h3">Benguet — Cordillera</div>
+              <div style="font-size:.8rem;color:var(--ink-300);">Mountain Province, Luzon — Highland Ube</div>
+            </div>
+            <span class="badge badge-purple" style="margin-left:auto;">Grade A</span>
+          </div>
+          <div class="detail-grid" style="grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+            <div class="detail-item"><div class="d-label">Farmers</div><div class="d-val">7</div></div>
+            <div class="detail-item"><div class="d-label">Variety</div><div class="d-val">Cordillera Ube</div></div>
+            <div class="detail-item"><div class="d-label">2025 Yield</div><div class="d-val">1,600 kg</div></div>
+            <div class="detail-item"><div class="d-label">Grade</div><div class="d-val">A</div></div>
+            <div class="detail-item"><div class="d-label">Farmgate Price</div><div class="d-val">₱90–110/kg</div></div>
+            <div class="detail-item"><div class="d-label">Altitude</div><div class="d-val">1,400–1,800m</div></div>
+          </div>
+          <div class="quality-gauge" style="margin-bottom:16px;">
+            <div class="gauge-stars">★★★★☆</div>
+            <div class="gauge-label">Quality Score: 88/100 — High starch, earthy notes</div>
+          </div>
+          <p class="body-sm text-muted">High-altitude cultivation in Benguet produces ube with distinctive earthy, slightly nutty flavor notes. Lower moisture content makes it particularly suitable for powder production with excellent shelf stability.</p>
+        </div>
+
+        <!-- Quezon -->
+        <div class="region-info-content" id="region-quezon">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+            <div style="font-size:2rem;">🌿</div>
+            <div>
+              <div class="h3">Quezon Province</div>
+              <div style="font-size:.8rem;color:var(--ink-300);">Southern Luzon — Volume Production</div>
+            </div>
+            <span class="badge badge-success" style="margin-left:auto;">Grade B</span>
+          </div>
+          <div class="detail-grid" style="grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+            <div class="detail-item"><div class="d-label">Farmers</div><div class="d-val">6</div></div>
+            <div class="detail-item"><div class="d-label">Variety</div><div class="d-val">Standard Cultivar</div></div>
+            <div class="detail-item"><div class="d-label">2025 Yield</div><div class="d-val">2,100 kg</div></div>
+            <div class="detail-item"><div class="d-label">Grade</div><div class="d-val">B</div></div>
+            <div class="detail-item"><div class="d-label">Farmgate Price</div><div class="d-val">₱60–80/kg</div></div>
+            <div class="detail-item"><div class="d-label">Harvest Season</div><div class="d-val">Nov–Jan</div></div>
+          </div>
+          <div class="quality-gauge" style="margin-bottom:16px;">
+            <div class="gauge-stars">★★★☆☆</div>
+            <div class="gauge-label">Quality Score: 78/100 — Good volume, standard quality</div>
+          </div>
+          <p class="body-sm text-muted">Quezon is our volume production region, providing Grade B ube powder for mid-tier buyers and blended products. All farms are certified under our partner program.</p>
+        </div>
+
+        <!-- Leyte -->
+        <div class="region-info-content" id="region-leyte">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+            <div style="font-size:2rem;">🌺</div>
+            <div>
+              <div class="h3">Leyte Province</div>
+              <div style="font-size:.8rem;color:var(--ink-300);">Eastern Visayas — Emerging Premium Zone</div>
+            </div>
+            <span class="badge badge-purple" style="margin-left:auto;">Grade A</span>
+          </div>
+          <div class="detail-grid" style="grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+            <div class="detail-item"><div class="d-label">Farmers</div><div class="d-val">5</div></div>
+            <div class="detail-item"><div class="d-label">Variety</div><div class="d-val">Leyte Ube</div></div>
+            <div class="detail-item"><div class="d-label">2025 Yield</div><div class="d-val">900 kg</div></div>
+            <div class="detail-item"><div class="d-label">Grade</div><div class="d-val">A</div></div>
+            <div class="detail-item"><div class="d-label">Farmgate Price</div><div class="d-val">₱95–115/kg</div></div>
+            <div class="detail-item"><div class="d-label">Processing</div><div class="d-val">Tunga Facility</div></div>
+          </div>
+          <div class="quality-gauge" style="margin-bottom:16px;">
+            <div class="gauge-stars">★★★★☆</div>
+            <div class="gauge-label">Quality Score: 86/100 — Emerging quality, scaling fast</div>
+          </div>
+          <p class="body-sm text-muted">Leyte is an emerging premium region with a new 50M-peso processing plant in Tunga providing local value-adding capacity. Vera Heritage is one of the first partners using this facility for export-grade processing.</p>
+        </div>
+
+        <!-- Mindanao / Bukidnon -->
+        <div class="region-info-content" id="region-mindanao">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+            <div style="font-size:2rem;">🌄</div>
+            <div>
+              <div class="h3">Mindanao (Bukidnon)</div>
+              <div style="font-size:.8rem;color:var(--ink-300);">Northern Mindanao — Upland Cultivation</div>
+            </div>
+            <span class="badge badge-success" style="margin-left:auto;">Grade B+</span>
+          </div>
+          <div class="detail-grid" style="grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+            <div class="detail-item"><div class="d-label">Farmers</div><div class="d-val">3</div></div>
+            <div class="detail-item"><div class="d-label">Variety</div><div class="d-val">Mindanao Ube</div></div>
+            <div class="detail-item"><div class="d-label">2025 Yield</div><div class="d-val">600 kg</div></div>
+            <div class="detail-item"><div class="d-label">Grade</div><div class="d-val">B+</div></div>
+            <div class="detail-item"><div class="d-label">Farmgate Price</div><div class="d-val">₱70–90/kg</div></div>
+            <div class="detail-item"><div class="d-label">Altitude</div><div class="d-val">700–1,200m</div></div>
+          </div>
+          <div class="quality-gauge" style="margin-bottom:16px;">
+            <div class="gauge-stars">★★★☆☆</div>
+            <div class="gauge-label">Quality Score: 82/100 — Developing program</div>
+          </div>
+          <p class="body-sm text-muted">Bukidnon's highland climate produces a good-quality ube with strong starch content. This region is in our farmer development program — we're investing in soil improvement and training for the next harvest cycle.</p>
+        </div>
+
+        <!-- Palawan & Luzon generic -->
+        <div class="region-info-content" id="region-palawan">
+          <div style="font-size:2rem;margin-bottom:12px;">🌴</div>
+          <div class="h3" style="margin-bottom:8px;">Palawan — Prospecting Region</div>
+          <p class="body-sm text-muted">Palawan is currently in our prospecting phase. Soil surveys and test plots are underway. Potential for unique micro-climate varieties.</p>
+        </div>
+        <div class="region-info-content" id="region-luzon">
+          <div style="font-size:2rem;margin-bottom:12px;">🗻</div>
+          <div class="h3" style="margin-bottom:8px;">Luzon Region</div>
+          <p class="body-sm text-muted">Click a specific marker (BTG for Batangas, BNG for Benguet, QZN for Quezon) to see detailed regional data.</p>
+        </div>
+        <div class="region-info-content" id="region-visayas">
+          <div style="font-size:2rem;margin-bottom:12px;">🏝️</div>
+          <div class="h3" style="margin-bottom:8px;">Visayas Region</div>
+          <p class="body-sm text-muted">The Visayas hosts our top-tier Bohol Kinampay operations plus partner farms on Leyte. Click BOHOL or LYT markers for specifics.</p>
+        </div>
+        <div class="region-info-content" id="region-bukidnon">
+          <!-- Redirect to mindanao -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     HARVEST CALENDAR
+     ============================================================ -->
+<section class="harvest-cal">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">Harvest Calendar</div>
+      <h2 class="h2 section-title">Annual harvest & supply cycle</h2>
+      <p class="body-md text-muted section-subtitle">Philippine ube peaks November–December. Vera Heritage uses cold storage and processing to extend availability year-round.</p>
+    </div>
+
+    <div class="card" style="padding:32px;margin-bottom:24px;">
+      <div class="cal-grid">
+        <div class="cal-month">
+          <div class="cal-month-label">Jan</div>
+          <div class="cal-bar-wrap"><div class="cal-bar low" style="height:20%"></div></div>
+          <div class="cal-vol">800</div>
+        </div>
+        <div class="cal-month">
+          <div class="cal-month-label">Feb</div>
+          <div class="cal-bar-wrap"><div class="cal-bar none" style="height:5%"></div></div>
+          <div class="cal-vol" style="color:var(--ink-100);">—</div>
+        </div>
+        <div class="cal-month">
+          <div class="cal-month-label">Mar</div>
+          <div class="cal-bar-wrap"><div class="cal-bar none" style="height:5%"></div></div>
+          <div class="cal-vol" style="color:var(--ink-100);">—</div>
+        </div>
+        <div class="cal-month">
+          <div class="cal-month-label">Apr</div>
+          <div class="cal-bar-wrap"><div class="cal-bar none" style="height:5%"></div></div>
+          <div class="cal-vol" style="color:var(--ink-100);">—</div>
+        </div>
+        <div class="cal-month">
+          <div class="cal-month-label">May</div>
+          <div class="cal-bar-wrap"><div class="cal-bar none" style="height:8%"></div></div>
+          <div class="cal-vol" style="color:var(--ink-100);">—</div>
+        </div>
+        <div class="cal-month">
+          <div class="cal-month-label">Jun</div>
+          <div class="cal-bar-wrap"><div class="cal-bar none" style="height:8%"></div></div>
+          <div class="cal-vol" style="color:var(--ink-100);">—</div>
+        </div>
+        <div class="cal-month">
+          <div class="cal-month-label">Jul</div>
+          <div class="cal-bar-wrap"><div class="cal-bar low" style="height:15%"></div></div>
+          <div class="cal-vol" style="color:var(--ink-300);">Planting</div>
+        </div>
+        <div class="cal-month">
+          <div class="cal-month-label">Aug</div>
+          <div class="cal-bar-wrap"><div class="cal-bar low" style="height:15%"></div></div>
+          <div class="cal-vol" style="color:var(--ink-300);">Growing</div>
+        </div>
+        <div class="cal-month">
+          <div class="cal-month-label">Sep</div>
+          <div class="cal-bar-wrap"><div class="cal-bar low" style="height:18%"></div></div>
+          <div class="cal-vol" style="color:var(--ink-300);">Growing</div>
+        </div>
+        <div class="cal-month">
+          <div class="cal-month-label">Oct</div>
+          <div class="cal-bar-wrap"><div class="cal-bar harvest" style="height:35%"></div></div>
+          <div class="cal-vol">Early</div>
+        </div>
+        <div class="cal-month">
+          <div class="cal-month-label">Nov</div>
+          <div class="cal-bar-wrap"><div class="cal-bar peak" style="height:100%"></div></div>
+          <div class="cal-vol" style="color:var(--gold-600);font-weight:700;">PEAK</div>
+        </div>
+        <div class="cal-month">
+          <div class="cal-month-label">Dec</div>
+          <div class="cal-bar-wrap"><div class="cal-bar peak" style="height:80%"></div></div>
+          <div class="cal-vol" style="color:var(--gold-600);font-weight:700;">HIGH</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:20px;margin-top:16px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:8px;font-size:.75rem;color:var(--ink-300);"><div style="width:12px;height:12px;border-radius:2px;background:var(--gold-500)"></div>Peak Harvest</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:.75rem;color:var(--ink-300);"><div style="width:12px;height:12px;border-radius:2px;background:var(--purple-600)"></div>Active Harvest</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:.75rem;color:var(--ink-300);"><div style="width:12px;height:12px;border-radius:2px;background:var(--purple-200)"></div>Off-Season (Cold Stock)</div>
+      </div>
+    </div>
+
+    <div class="card" style="background:var(--purple-50);border-color:var(--purple-200);padding:20px 24px;">
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <div style="font-size:1.3rem;">💡</div>
+        <div>
+          <div style="font-weight:700;margin-bottom:4px;">Year-round supply through cold storage & processing</div>
+          <div class="body-sm text-muted">Unlike most Philippine suppliers who only sell during November–December, Vera Heritage maintains year-round availability via our cold storage network in Bohol and Manila, and IQF-frozen puree stock that ships any month.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FARMER REGISTRY
+     ============================================================ -->
+<section class="section" id="farmer-registry">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">Farmer Registry</div>
+      <h2 class="h2 section-title">Our certified partner farmers</h2>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
+      <select class="form-input form-select" style="width:auto;padding:8px 36px 8px 12px;font-size:.83rem;" onchange="filterFarmers(this.value)">
+        <option value="">All Regions</option>
+        <option value="Bohol">Bohol</option>
+        <option value="Batangas">Batangas</option>
+        <option value="Benguet">Benguet</option>
+        <option value="Quezon">Quezon</option>
+        <option value="Leyte">Leyte</option>
+      </select>
+      <select class="form-input form-select" style="width:auto;padding:8px 36px 8px 12px;font-size:.83rem;">
+        <option>All Grades</option>
+        <option>Grade A</option>
+        <option>Grade B</option>
+      </select>
+      <input type="text" class="form-input" style="width:240px;padding:8px 14px;" placeholder="Search farmers…"/>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;" id="farmerList">
+
+      <div class="farmer-card" onclick="toggleFarmer(this)" data-region="Bohol">
+        <div class="farmer-avatar">👨‍🌾</div>
+        <div style="flex:1;min-width:0;">
+          <div class="farmer-name">Rodrigo Magbanua</div>
+          <div class="farmer-location">📍 Carmen, Bohol · Partner since 2024</div>
+          <div class="farmer-tags">
+            <span class="badge badge-gold">Kinampay Heritage</span>
+            <span class="badge badge-success badge-dot">Active</span>
+            <span class="badge badge-purple">Grade A</span>
+          </div>
+          <div class="farmer-detail">
+            <div class="detail-grid">
+              <div class="detail-item"><div class="d-label">Farm Size</div><div class="d-val">3.2 ha</div></div>
+              <div class="detail-item"><div class="d-label">2025 Yield</div><div class="d-val">1,280 kg</div></div>
+              <div class="detail-item"><div class="d-label">Farmgate Paid</div><div class="d-val">₱135/kg</div></div>
+              <div class="detail-item"><div class="d-label">Variety</div><div class="d-val">Kinampay</div></div>
+              <div class="detail-item"><div class="d-label">Last Harvest</div><div class="d-val">Dec 2025</div></div>
+              <div class="detail-item"><div class="d-label">Certification</div><div class="d-val">COA ✓ HACCP ✓</div></div>
+            </div>
+            <div class="progress-wrap"><div class="progress-label"><span>Quality Score</span><span style="color:var(--purple-600);font-weight:700;">98/100</span></div><div class="progress-track"><div class="progress-fill" style="width:98%"></div></div></div>
+          </div>
+        </div>
+        <div class="farmer-meta">
+          <div class="farmer-yield">1,280</div>
+          <div class="farmer-yield-label">kg / 2025</div>
+          <div class="quality-gauge" style="justify-content:flex-end;margin-top:6px;"><div class="gauge-stars" style="font-size:.75rem;">★★★★★</div></div>
+        </div>
+      </div>
+
+      <div class="farmer-card" onclick="toggleFarmer(this)" data-region="Bohol">
+        <div class="farmer-avatar">👩‍🌾</div>
+        <div style="flex:1;min-width:0;">
+          <div class="farmer-name">Maria Dela Cruz</div>
+          <div class="farmer-location">📍 Tagbilaran, Bohol · Partner since 2024</div>
+          <div class="farmer-tags">
+            <span class="badge badge-gold">Kinampay Heritage</span>
+            <span class="badge badge-success badge-dot">Active</span>
+            <span class="badge badge-purple">Grade A</span>
+          </div>
+          <div class="farmer-detail">
+            <div class="detail-grid">
+              <div class="detail-item"><div class="d-label">Farm Size</div><div class="d-val">1.8 ha</div></div>
+              <div class="detail-item"><div class="d-label">2025 Yield</div><div class="d-val">720 kg</div></div>
+              <div class="detail-item"><div class="d-label">Farmgate Paid</div><div class="d-val">₱130/kg</div></div>
+              <div class="detail-item"><div class="d-label">Variety</div><div class="d-val">Kinampay</div></div>
+              <div class="detail-item"><div class="d-label">Last Harvest</div><div class="d-val">Nov 2025</div></div>
+              <div class="detail-item"><div class="d-label">Certification</div><div class="d-val">COA ✓</div></div>
+            </div>
+            <div class="progress-wrap"><div class="progress-label"><span>Quality Score</span><span style="color:var(--purple-600);font-weight:700;">96/100</span></div><div class="progress-track"><div class="progress-fill" style="width:96%"></div></div></div>
+          </div>
+        </div>
+        <div class="farmer-meta">
+          <div class="farmer-yield">720</div>
+          <div class="farmer-yield-label">kg / 2025</div>
+          <div class="quality-gauge" style="justify-content:flex-end;margin-top:6px;"><div class="gauge-stars" style="font-size:.75rem;">★★★★★</div></div>
+        </div>
+      </div>
+
+      <div class="farmer-card" onclick="toggleFarmer(this)" data-region="Batangas">
+        <div class="farmer-avatar">👨‍🌾</div>
+        <div style="flex:1;min-width:0;">
+          <div class="farmer-name">Jose Santos</div>
+          <div class="farmer-location">📍 Lipa City, Batangas · Partner since 2025</div>
+          <div class="farmer-tags">
+            <span class="badge badge-purple">Kinampay</span>
+            <span class="badge badge-success badge-dot">Active</span>
+            <span class="badge badge-purple">Grade A</span>
+          </div>
+          <div class="farmer-detail">
+            <div class="detail-grid">
+              <div class="detail-item"><div class="d-label">Farm Size</div><div class="d-val">2.4 ha</div></div>
+              <div class="detail-item"><div class="d-label">2025 Yield</div><div class="d-val">960 kg</div></div>
+              <div class="detail-item"><div class="d-label">Farmgate Paid</div><div class="d-val">₱115/kg</div></div>
+              <div class="detail-item"><div class="d-label">Variety</div><div class="d-val">Kinampay</div></div>
+              <div class="detail-item"><div class="d-label">Last Harvest</div><div class="d-val">Dec 2025</div></div>
+              <div class="detail-item"><div class="d-label">Certification</div><div class="d-val">COA ✓ HACCP ✓</div></div>
+            </div>
+            <div class="progress-wrap"><div class="progress-label"><span>Quality Score</span><span style="color:var(--purple-600);font-weight:700;">91/100</span></div><div class="progress-track"><div class="progress-fill" style="width:91%"></div></div></div>
+          </div>
+        </div>
+        <div class="farmer-meta">
+          <div class="farmer-yield">960</div>
+          <div class="farmer-yield-label">kg / 2025</div>
+          <div class="quality-gauge" style="justify-content:flex-end;margin-top:6px;"><div class="gauge-stars" style="font-size:.75rem;">★★★★☆</div></div>
+        </div>
+      </div>
+
+      <div class="farmer-card" onclick="toggleFarmer(this)" data-region="Benguet">
+        <div class="farmer-avatar">👩‍🌾</div>
+        <div style="flex:1;min-width:0;">
+          <div class="farmer-name">Nora Bangkay</div>
+          <div class="farmer-location">📍 La Trinidad, Benguet · Partner since 2025</div>
+          <div class="farmer-tags">
+            <span class="badge badge-purple">Cordillera Ube</span>
+            <span class="badge badge-success badge-dot">Active</span>
+            <span class="badge badge-purple">Grade A</span>
+          </div>
+          <div class="farmer-detail">
+            <div class="detail-grid">
+              <div class="detail-item"><div class="d-label">Farm Size</div><div class="d-val">1.2 ha</div></div>
+              <div class="detail-item"><div class="d-label">2025 Yield</div><div class="d-val">480 kg</div></div>
+              <div class="detail-item"><div class="d-label">Farmgate Paid</div><div class="d-val">₱100/kg</div></div>
+              <div class="detail-item"><div class="d-label">Altitude</div><div class="d-val">1,650 m</div></div>
+              <div class="detail-item"><div class="d-label">Last Harvest</div><div class="d-val">Jan 2026</div></div>
+              <div class="detail-item"><div class="d-label">Certification</div><div class="d-val">COA ✓</div></div>
+            </div>
+            <div class="progress-wrap"><div class="progress-label"><span>Quality Score</span><span style="color:var(--purple-600);font-weight:700;">88/100</span></div><div class="progress-track"><div class="progress-fill" style="width:88%"></div></div></div>
+          </div>
+        </div>
+        <div class="farmer-meta">
+          <div class="farmer-yield">480</div>
+          <div class="farmer-yield-label">kg / 2025</div>
+          <div class="quality-gauge" style="justify-content:flex-end;margin-top:6px;"><div class="gauge-stars" style="font-size:.75rem;">★★★★☆</div></div>
+        </div>
+      </div>
+
+      <div class="farmer-card" onclick="toggleFarmer(this)" data-region="Leyte">
+        <div class="farmer-avatar">👨‍🌾</div>
+        <div style="flex:1;min-width:0;">
+          <div class="farmer-name">Pedro Reyes</div>
+          <div class="farmer-location">📍 Tunga, Leyte · Partner since 2025</div>
+          <div class="farmer-tags">
+            <span class="badge badge-purple">Leyte Ube</span>
+            <span class="badge badge-success badge-dot">Active</span>
+            <span class="badge badge-success">Grade A</span>
+          </div>
+          <div class="farmer-detail">
+            <div class="detail-grid">
+              <div class="detail-item"><div class="d-label">Farm Size</div><div class="d-val">1.6 ha</div></div>
+              <div class="detail-item"><div class="d-label">2025 Yield</div><div class="d-val">640 kg</div></div>
+              <div class="detail-item"><div class="d-label">Farmgate Paid</div><div class="d-val">₱105/kg</div></div>
+              <div class="detail-item"><div class="d-label">Processing</div><div class="d-val">Tunga Plant</div></div>
+              <div class="detail-item"><div class="d-label">Last Harvest</div><div class="d-val">Nov 2025</div></div>
+              <div class="detail-item"><div class="d-label">Certification</div><div class="d-val">COA ✓</div></div>
+            </div>
+            <div class="progress-wrap"><div class="progress-label"><span>Quality Score</span><span style="color:var(--purple-600);font-weight:700;">86/100</span></div><div class="progress-track"><div class="progress-fill" style="width:86%"></div></div></div>
+          </div>
+        </div>
+        <div class="farmer-meta">
+          <div class="farmer-yield">640</div>
+          <div class="farmer-yield-label">kg / 2025</div>
+          <div class="quality-gauge" style="justify-content:flex-end;margin-top:6px;"><div class="gauge-stars" style="font-size:.75rem;">★★★★☆</div></div>
+        </div>
+      </div>
+
+      <div style="text-align:center;padding:20px;background:var(--paper-2);border-radius:var(--radius-md);color:var(--ink-300);font-size:.875rem;">
+        Showing 5 of 48 registered farmers. Full registry available in the <a href="portal.html" style="color:var(--purple-600);font-weight:600;">B2B Portal →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     VARIETY COMPARISON
+     ============================================================ -->
+<section class="variety-section">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-eyebrow">Variety Guide</div>
+      <h2 class="h2 section-title">Know your ube varieties</h2>
+    </div>
+    <div class="grid-3 stagger">
+      <div class="variety-card premium">
+        <div style="display:flex;justify-content:space-between;align-items:center;"><div class="variety-icon">🏆</div><span class="badge badge-gold">Premium</span></div>
+        <div class="variety-name">Kinampay</div>
+        <div class="variety-origin">📍 Bohol & Batangas, Luzon</div>
+        <div class="variety-attrs">
+          <div class="attr-row"><div class="attr-label">Aroma</div><div class="attr-bar-wrap"><div class="attr-bar"><div class="attr-fill gold" style="width:100%"></div></div></div><div class="attr-score" style="color:var(--gold-600);">10</div></div>
+          <div class="attr-row"><div class="attr-label">Pigment</div><div class="attr-bar-wrap"><div class="attr-bar"><div class="attr-fill" style="width:98%"></div></div></div><div class="attr-score">9.8</div></div>
+          <div class="attr-row"><div class="attr-label">Sweetness</div><div class="attr-bar-wrap"><div class="attr-bar"><div class="attr-fill" style="width:90%"></div></div></div><div class="attr-score">9.0</div></div>
+          <div class="attr-row"><div class="attr-label">Starch</div><div class="attr-bar-wrap"><div class="attr-bar"><div class="attr-fill" style="width:85%"></div></div></div><div class="attr-score">8.5</div></div>
+          <div class="attr-row"><div class="attr-label">Yield/ha</div><div class="attr-bar-wrap"><div class="attr-bar"><div class="attr-fill" style="width:60%"></div></div></div><div class="attr-score">6.0</div></div>
+        </div>
+        <div class="badge badge-gold" style="margin-top:16px;">Heritage — No Substitute</div>
+      </div>
+
+      <div class="variety-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;"><div class="variety-icon">🌿</div><span class="badge badge-purple">Standard</span></div>
+        <div class="variety-name">Cordillera Ube</div>
+        <div class="variety-origin">📍 Benguet, Mountain Province</div>
+        <div class="variety-attrs">
+          <div class="attr-row"><div class="attr-label">Aroma</div><div class="attr-bar-wrap"><div class="attr-bar"><div class="attr-fill" style="width:75%"></div></div></div><div class="attr-score">7.5</div></div>
+          <div class="attr-row"><div class="attr-label">Pigment</div><div class="attr-bar-wrap"><div class="attr-bar"><div class="attr-fill" style="width:80%"></div></div></div><div class="attr-score">8.0</div></div>
+          <div class="attr-row"><div class="attr-label">Sweetness</div><div class="attr-bar-wrap"><div class="attr-bar"><div class="attr-fill" style="width:65%"></div></div></div><div class="attr-score">6.5</div></div>
+          <div class="attr-row"><div class="attr-label">Starch</div><div class="attr-bar-wrap"><div class="attr-bar"><div class="attr-fill" style="width:92%"></div></div></div><div class="attr-score">9.2</div></div>
+          <div class="attr-row"><div class="attr-label">Yield/ha</div><div class="attr-bar-wrap"><div class="attr-bar"><div class="attr-fill" style="width:70%"></div></div></div><div class="attr-score">7.0</div></div>
+        </div>
+        <div class="badge badge-purple" style="margin-top:16px;">Ideal for powder production</div>
+      </div>
+
+      <div class="variety-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;"><div class="variety-icon">🌱</div><span class="badge badge-success">Volume</span></div>
+        <div class="variety-name">Standard Cultivar</div>
+        <div class="variety-origin">📍 Quezon, Mindanao</div>
+        <div class="variety-attrs">
+          <div class="attr-row"><div class="attr-label">Aroma</div><div class="attr-bar-wrap"><div class="attr-bar"><div class="attr-fill" style="width:55%"></div></div></div><div class="attr-score">5.5</div></div>
+          <div class="attr-row"><div class="attr-label">Pigment</div><div class="attr-bar-wrap"><div class="attr-bar"><div class="attr-fill" style="width:65%"></div></div></div><div class="attr-score">6.5</div></div>
+          <div class="attr-row"><div class="attr-label">Sweetness</div><div class="attr-bar-wrap"><div class="attr-bar"><div class="attr-fill" style="width:70%"></div></div></div><div class="attr-score">7.0</div></div>
+          <div class="attr-row"><div class="attr-label">Starch</div><div class="attr-bar-wrap"><div class="attr-bar"><div class="attr-fill" style="width:80%"></div></div></div><div class="attr-score">8.0</div></div>
+          <div class="attr-row"><div class="attr-label">Yield/ha</div><div class="attr-bar-wrap"><div class="attr-bar"><div class="attr-fill" style="width:95%"></div></div></div><div class="attr-score">9.5</div></div>
+        </div>
+        <div class="badge badge-success" style="margin-top:16px;">High volume, cost-effective</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FARMER JOIN CTA
+     ============================================================ -->
+<section class="farmer-cta">
+  <div class="container">
+    <div class="section-eyebrow" style="justify-content:center;color:var(--gold-300);">Are You a Farmer?</div>
+    <h2 class="display-md" style="color:#fff;text-align:center;margin-bottom:20px;max-width:680px;margin-left:auto;margin-right:auto;">Join the Vera Heritage<br/><em style="font-style:normal;color:var(--gold-400);">farmer partner program.</em></h2>
+    <p class="body-lg" style="color:rgba(255,255,255,.5);text-align:center;max-width:560px;margin:0 auto 40px;">Premium prices, co-op dividends, technical support, and real-time market visibility. We're actively recruiting ube farmers across the Philippines.</p>
+    <div style="text-align:center;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+      <a href="index.html#contact" class="btn btn-gold btn-xl">Apply as a Farmer Partner</a>
+      <a href="index.html" class="btn btn-outline-white btn-xl">Learn About Our Mission</a>
+    </div>
+  </div>
+</section>
+
+<!-- Chatbot -->
+<button class="chatbot-trigger" id="chatTrigger" onclick="toggleChat()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+</button>
+<div class="chatbot-window" id="chatWindow">
+  <div class="chatbot-head">
+    <div class="chatbot-head-avatar">🌿</div>
+    <div class="chatbot-head-info"><div class="name">Vera AI Assistant</div><div class="status">Online — Ask about our farmers</div></div>
+    <button class="chatbot-head-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chatbot-messages" id="chatMessages"></div>
+  <div class="chatbot-quick" id="quickReplies">
+    <button class="quick-reply" onclick="sendQuick('Tell me about Kinampay ube')">Kinampay</button>
+    <button class="quick-reply" onclick="sendQuick('How do farmers get paid?')">Farmer pay</button>
+    <button class="quick-reply" onclick="sendQuick('When is harvest season?')">Harvest season</button>
+  </div>
+  <div class="chatbot-input-row">
+    <input type="text" class="chatbot-input" id="chatInput" placeholder="Ask about farmers, varieties, regions…" onkeydown="if(event.key==='Enter')sendChat()"/>
+    <button class="chatbot-send" onclick="sendChat()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;">
+      <img src="assets/logo.svg" alt="Vera Heritage" style="height:44px;filter:brightness(0) invert(1);opacity:.7;"/>
+      <span style="font-size:.8rem;color:rgba(255,255,255,.3);">© 2026 Vera Heritage · Purple is the New Gold ™</span>
+      <a href="index.html" style="color:rgba(255,255,255,.4);font-size:.8rem;">← Back to main site</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/app.js"></script>
+<script src="js/chatbot.js"></script>
+<script>
+  function showRegion(id) {
+    document.getElementById('regionPlaceholder').style.display = 'none';
+    document.querySelectorAll('.region-info-content').forEach(el => el.classList.remove('active'));
+    const el = document.getElementById('region-' + id);
+    if (el) el.classList.add('active');
+  }
+  // Bukidnon redirects to mindanao
+  document.getElementById('region-bukidnon') && (document.getElementById('region-bukidnon').innerHTML = document.getElementById('region-mindanao') ? '' : '');
+  function showRegion(id) {
+    document.getElementById('regionPlaceholder').style.display = 'none';
+    document.querySelectorAll('.region-info-content').forEach(el => el.classList.remove('active'));
+    const el = document.getElementById('region-' + id) || document.getElementById('region-mindanao');
+    if (el) el.classList.add('active');
+  }
+  function toggleFarmer(card) {
+    const wasExpanded = card.classList.contains('expanded');
+    document.querySelectorAll('.farmer-card').forEach(c => c.classList.remove('expanded'));
+    if (!wasExpanded) card.classList.add('expanded');
+  }
+  function filterFarmers(region) {
+    document.querySelectorAll('.farmer-card').forEach(card => {
+      if (!region || card.dataset.region === region) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+</script>
+</body>
+</html>

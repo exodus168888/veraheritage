@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vera Heritage — Purple is the New Gold | Premium Philippine Ube</title>
+  <meta name="description" content="Vera Heritage sources and exports premium Philippine ube directly from certified Filipino farmers. Authentic Kinampay from Bohol, traceable from farm to export."/>
+  <meta property="og:title" content="Vera Heritage — Premium Philippine Ube"/>
+  <meta property="og:description" content="Authentic, traceable, premium ube powder and products direct from the Philippines."/>
+  <meta property="og:type" content="website"/>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml"/>
+  <link rel="stylesheet" href="css/main.css"/>
+  <style>
+    /* Page-specific styles */
+    .hero-tagline {
+      font-size: clamp(.75rem, 1.5vw, .85rem);
+      font-weight: 600;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--gold-400);
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .hero-tagline::before {
+      content: '';
+      display: block;
+      width: 40px; height: 1.5px;
+      background: var(--gold-400);
+    }
+    .hero-headline { color: #fff; margin-bottom: 28px; }
+    .hero-headline em { font-style: normal; color: var(--gold-400); }
+    .hero-sub {
+      color: rgba(255,255,255,.55);
+      max-width: 520px;
+      font-size: 1.1rem;
+      font-weight: 300;
+      line-height: 1.8;
+      margin-bottom: 40px;
+    }
+    .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+    .hero-right {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-visual-ring {
+      position: absolute;
+      width: 520px; height: 520px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,.2);
+      animation: spin-slow 30s linear infinite;
+    }
+    .hero-visual-ring-2 {
+      width: 420px; height: 420px;
+      border-color: rgba(139,91,199,.2);
+      animation-direction: reverse;
+      animation-duration: 20s;
+    }
+    @keyframes spin-slow { to { transform: rotate(360deg); } }
+    .hero-logo-display {
+      position: relative;
+      z-index: 2;
+      animation: float 6s ease-in-out infinite;
+    }
+    .hero-logo-display img { width: 280px; filter: drop-shadow(0 20px 60px rgba(201,168,76,.4)); }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-12px); }
+    }
+    .hero-stats {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .hero-stat-pill {
+      background: rgba(255,255,255,.08);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 40px;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+      white-space: nowrap;
+    }
+    .hero-stat-pill .val { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 700; color: var(--gold-400); }
+    .hero-stat-pill .lbl { font-size: .72rem; color: rgba(255,255,255,.5); }
+    .stat-pill-1 { right: -40px; top: 80px; }
+    .stat-pill-2 { left: -60px; top: 220px; }
+    .stat-pill-3 { right: -20px; bottom: 100px; }
+
+    /* About section */
+    .about-img-wrap {
+      position: relative;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      aspect-ratio: 4/5;
+      background: linear-gradient(135deg, var(--purple-100), var(--gold-100));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .about-img-placeholder {
+      font-size: 8rem;
+      opacity: .5;
+    }
+    .about-badge {
+      position: absolute;
+      bottom: -20px; right: -20px;
+      background: var(--purple-600);
+      color: #fff;
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      box-shadow: var(--shadow-purple);
+      text-align: center;
+    }
+    .about-badge .num { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 700; color: var(--gold-300); line-height: 1; }
+    .about-badge .txt { font-size: .75rem; color: rgba(255,255,255,.7); margin-top: 4px; }
+    .about-pillars { display: flex; flex-direction: column; gap: 24px; margin-top: 40px; }
+    .about-pillar { display: flex; gap: 16px; align-items: flex-start; }
+    .about-pillar-icon {
+      width: 44px; height: 44px;
+      border-radius: var(--radius-sm);
+      background: var(--purple-100);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    /* Products */
+    .products-section { background: var(--paper-2); }
+    .product-visual-1 { background: linear-gradient(135deg, #EDE4F8, #C4A4E8); }
+    .product-visual-2 { background: linear-gradient(135deg, #F8F0DC, #DFC075); }
+    .product-visual-3 { background: linear-gradient(135deg, #EDE4F8, #AB82DC); }
+    .product-visual-4 { background: linear-gradient(135deg, #D6F4E8, #1A7C4E33); }
+    .product-visual-5 { background: linear-gradient(135deg, #F8F0DC, #C9A84C44); }
+
+    /* Why PH section */
+    .why-section { background: linear-gradient(180deg, #fff, var(--paper-2)); }
+    .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 48px; }
+    .why-card {
+      padding: 28px;
+      border-radius: var(--radius-lg);
+      background: #fff;
+      border: 1px solid var(--paper-3);
+      position: relative;
+      overflow: hidden;
+    }
+    .why-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 4px; height: 100%;
+      background: var(--purple-600);
+      border-radius: 4px 0 0 4px;
+    }
+    .why-card.gold::before { background: var(--gold-500); }
+    .why-card-icon { font-size: 2rem; margin-bottom: 12px; }
+    .why-card-title { font-weight: 700; font-size: 1rem; margin-bottom: 8px; }
+    .why-card-desc { font-size: .875rem; color: var(--ink-300); line-height: 1.65; }
+    .variety-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--purple-900);
+      border-radius: var(--radius-full);
+      color: var(--gold-400);
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    /* Market section */
+    .market-section { background: var(--purple-950); color: #fff; }
+    .market-card {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+    }
+    .market-number {
+      font-family: var(--font-serif);
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: var(--gold-400);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .market-label { font-size: .8rem; color: rgba(255,255,255,.5); }
+    .market-source { font-size: .68rem; color: rgba(255,255,255,.3); margin-top: 8px; }
+
+    /* Farmer section */
+    .farmer-section { background: var(--paper); }
+    .farmer-mission-box {
+      background: linear-gradient(135deg, var(--purple-900), var(--purple-700));
+      border-radius: var(--radius-xl);
+      padding: 56px;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .farmer-mission-box::before {
+      content: '';
+      position: absolute;
+      top: -100px; right: -100px;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,168,76,.15), transparent 70%);
+    }
+    .farmer-mission-title { font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 600; margin-bottom: 20px; }
+    .farmer-mission-title em { font-style: normal; color: var(--gold-400); }
+    .impact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 40px; }
+    .impact-item { text-align: center; padding: 24px; background: rgba(255,255,255,.07); border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,.1); }
+    .impact-num { font-family: var(--font-serif); font-size: 2rem; font-weight: 700; color: var(--gold-300); }
+    .impact-lbl { font-size: .8rem; color: rgba(255,255,255,.55); margin-top: 6px; }
+
+    /* Destinations section */
+    .destinations-section { background: var(--paper-2); }
+    .dest-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 24px;
+      background: #fff;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--paper-3);
+      transition: all var(--t-fast);
+    }
+    .dest-item:hover { border-color: var(--purple-300); box-shadow: var(--shadow-sm); }
+    .dest-flag { font-size: 1.8rem; }
+    .dest-name { font-weight: 600; font-size: .95rem; }
+    .dest-desc { font-size: .78rem; color: var(--ink-300); }
+    .dest-bar-wrap { flex: 1; }
+    .dest-bar { height: 4px; background: var(--paper-2); border-radius: 2px; overflow: hidden; }
+    .dest-fill { height: 100%; background: linear-gradient(90deg, var(--purple-600), var(--purple-300)); border-radius: 2px; }
+
+    /* Portal CTA */
+    .portal-cta { background: #fff; }
+    .portal-cta-box {
+      background: linear-gradient(135deg, var(--purple-950) 0%, var(--purple-800) 100%);
+      border-radius: var(--radius-2xl);
+      padding: 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .portal-cta-box::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .portal-cta-inner { position: relative; z-index: 1; }
+    .portal-cta-title { color: #fff; font-size: clamp(2rem, 4vw, 3rem); font-weight: 600; margin-bottom: 16px; }
+    .portal-cta-title em { font-style: normal; color: var(--gold-400); }
+    .portal-cta-sub { color: rgba(255,255,255,.55); max-width: 540px; margin: 0 auto 40px; font-size: 1.05rem; }
+    .portal-features {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    .portal-feat { text-align: center; color: rgba(255,255,255,.7); }
+    .portal-feat-icon { font-size: 1.6rem; margin-bottom: 8px; }
+    .portal-feat-label { font-size: .78rem; font-weight: 500; letter-spacing: .04em; }
+
+    /* Contact */
+    .contact-section { background: var(--paper); }
+    .contact-info { display: flex; flex-direction: column; gap: 24px; }
+    .contact-item { display: flex; gap: 16px; align-items: flex-start; }
+    .contact-icon {
+      width: 44px; height: 44px;
+      background: var(--purple-100);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .contact-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-300); font-weight: 600; }
+    .contact-value { font-size: .95rem; font-weight: 500; color: var(--ink); }
+
+    /* Certifications */
+    .cert-section { background: var(--paper-2); }
+    .cert-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 28px 20px;
+      background: #fff;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--paper-3);
+    }
+    .cert-icon { font-size: 2.4rem; margin-bottom: 12px; }
+    .cert-name { font-weight: 700; font-size: .9rem; margin-bottom: 6px; }
+    .cert-desc { font-size: .78rem; color: var(--ink-300); }
+
+    /* Mobile menu overlay */
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      background: var(--ink);
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      transform: translateY(-100%);
+      transition: transform .4s var(--ease);
+    }
+    .mobile-menu.open { transform: translateY(0); }
+    .mobile-menu-link {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      color: #fff;
+      font-weight: 600;
+      transition: color var(--t-fast);
+    }
+    .mobile-menu-link:hover { color: var(--gold-400); }
+    .mobile-menu-close {
+      position: absolute;
+      top: 24px; right: 24px;
+      font-size: 1.5rem;
+      color: rgba(255,255,255,.6);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Page Loader -->
+<div class="page-loader" id="pageLoader">
+  <img src="assets/logo.svg" alt="Vera Heritage" class="loader-logo"/>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+</div>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-menu-close" id="mobileMenuClose">✕</button>
+  <a href="#story" class="mobile-menu-link" onclick="closeMobileMenu()">Our Story</a>
+  <a href="#products" class="mobile-menu-link" onclick="closeMobileMenu()">Products</a>
+  <a href="farmers.html" class="mobile-menu-link">Farmers</a>
+  <a href="supply-chain.html" class="mobile-menu-link">Supply Chain</a>
+  <a href="portal.html" class="mobile-menu-link">B2B Portal</a>
+  <a href="#contact" class="mobile-menu-link" onclick="closeMobileMenu()">Contact</a>
+</div>
+
+<!-- Navigation -->
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="assets/logo.svg" alt="Vera Heritage"/>
+    </a>
+    <div class="nav-links">
+      <a href="#story" class="nav-link">Our Story</a>
+      <a href="#products" class="nav-link">Products</a>
+      <a href="farmers.html" class="nav-link">Farmers</a>
+      <a href="supply-chain.html" class="nav-link">Supply Chain</a>
+      <a href="#contact" class="nav-link">Contact</a>
+    </div>
+    <div class="nav-actions">
+      <a href="portal.html" class="btn btn-primary btn-sm">B2B Portal →</a>
+    </div>
+    <div class="nav-mobile-toggle" id="mobileToggle" onclick="openMobileMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- ============================================================
+     HERO SECTION
+     ============================================================ -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-bg-pattern"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-glow hero-glow-1"></div>
+  <div class="hero-glow hero-glow-2"></div>
+
+  <!-- Floating particles -->
+  <div class="particles" id="particles"></div>
+
+  <div class="container-lg" style="position:relative;z-index:2;padding-top:var(--nav-h);">
+    <div class="grid-2" style="align-items:center;min-height:calc(100vh - var(--nav-h));padding:60px 0;">
+
+      <!-- Left: Text content -->
+      <div class="hero-content">
+        <div class="hero-tagline fade-up" id="heroEyebrow">Premium Philippine Ube — Est. 2024</div>
+        <h1 class="display-xl hero-headline" id="heroHeadline">
+          Purple<br/> is the<br/> new <em>Gold.</em>
+        </h1>
+        <p class="hero-sub fade-up" id="heroSub">
+          Vera Heritage connects global buyers with authentic, certified Philippine ube — directly from Bohol's heritage Kinampay farmers. Traceable, pure, and equitable from farm to export.
+        </p>
+        <div class="hero-ctas fade-up" id="heroCtas">
+          <a href="portal.html" class="btn btn-gold btn-xl">Access B2B Portal</a>
+          <a href="#story" class="btn btn-outline-white btn-xl">Our Story</a>
+        </div>
+      </div>
+
+      <!-- Right: Visual -->
+      <div class="hero-right">
+        <div class="hero-visual-ring"></div>
+        <div class="hero-visual-ring hero-visual-ring-2"></div>
+        <div class="hero-logo-display scale-in" id="heroLogo">
+          <img src="assets/logo.svg" alt="Vera Heritage"/>
+        </div>
+        <!-- Floating stat pills -->
+        <div class="hero-stat-pill stat-pill-1 fade-up" style="position:absolute;">
+          <div>
+            <div class="val">$455M</div>
+            <div class="lbl">Global Ube Market</div>
+          </div>
+        </div>
+        <div class="hero-stat-pill stat-pill-2 fade-up" style="position:absolute;">
+          <div>
+            <div class="val">6.9%</div>
+            <div class="lbl">CAGR to 2035</div>
+          </div>
+        </div>
+        <div class="hero-stat-pill stat-pill-3 fade-up" style="position:absolute;">
+          <div>
+            <div class="val">100%</div>
+            <div class="lbl">Traceable & Pure</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="scroll-indicator">
+    <div class="scroll-mouse"><div class="scroll-wheel"></div></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     STATS BAR
+     ============================================================ -->
+<section class="stats-bar">
+  <div class="container">
+    <div class="stats-bar-grid stagger" id="statsGrid">
+      <div class="stats-bar-item">
+        <div class="stat-value"><span class="counter" data-target="455">0</span><span class="unit">M</span></div>
+        <div class="stat-label">Global Ube Market 2024 (USD)</div>
+      </div>
+      <div class="stats-bar-item">
+        <div class="stat-value"><span class="counter" data-target="943" data-prefix="">0</span><span class="unit">M</span></div>
+        <div class="stat-label">Projected Market by 2035 (USD)</div>
+      </div>
+      <div class="stats-bar-item">
+        <div class="stat-value"><span class="counter" data-target="359">0</span><span class="unit">+</span></div>
+        <div class="stat-label">New Product Launches / Year</div>
+      </div>
+      <div class="stats-bar-item">
+        <div class="stat-value"><span class="counter" data-target="53">0</span><span class="unit">%</span></div>
+        <div class="stat-label">Decline in PH Supply Since 2006</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     ABOUT / STORY
+     ============================================================ -->
+<section class="section-lg" id="story">
+  <div class="container">
+    <div class="grid-2" style="align-items:center;gap:80px;">
+
+      <!-- Left: image/visual -->
+      <div class="fade-up">
+        <div class="about-img-wrap">
+          <div class="about-img-placeholder">🌱</div>
+          <!-- Replace with real photo: <img src="assets/bohol-farm.jpg" alt="Bohol Ube Farm" class="object-cover" style="width:100%;height:100%;"/> -->
+        </div>
+        <div class="about-badge">
+          <div class="num">100%</div>
+          <div class="txt">Philippine Origin<br/>Certified & Traceable</div>
+        </div>
+      </div>
+
+      <!-- Right: text -->
+      <div>
+        <div class="section-eyebrow fade-up">Our Story</div>
+        <h2 class="display-md section-title fade-up">
+          The world wants ube.<br/>The Philippines <em style="font-style:normal;color:var(--purple-600);">owns</em> it.
+        </h2>
+        <p class="body-lg text-muted fade-up">
+          Vera Heritage was founded on a simple truth: Philippine ube is the world's finest — yet Filipino farmers capture less than 4% of its global export value. While demand soars globally, foreign intermediaries fill the gap with imitations.
+        </p>
+        <p class="body-md text-muted fade-up" style="margin-top:16px;">
+          We are building the infrastructure to change that. Direct farmgate sourcing, transparent supply chains, AI-powered traceability, and equitable profit sharing — putting economic value back where it belongs: with Filipino farmers.
+        </p>
+
+        <div class="about-pillars stagger">
+          <div class="about-pillar">
+            <div class="about-pillar-icon">🔬</div>
+            <div>
+              <div class="h4">Third-Party Certified</div>
+              <div class="body-sm text-muted">Philippine FDA, HACCP, COA, allergen declarations — every batch documented for international buyers.</div>
+            </div>
+          </div>
+          <div class="about-pillar">
+            <div class="about-pillar-icon">📍</div>
+            <div>
+              <div class="h4">Single-Origin Traceability</div>
+              <div class="body-sm text-muted">Every lot number is linked to a specific farm, farmer, harvest date, and processing batch. Full chain visibility.</div>
+            </div>
+          </div>
+          <div class="about-pillar">
+            <div class="about-pillar-icon">🤝</div>
+            <div>
+              <div class="h4">Farmer-First Economics</div>
+              <div class="body-sm text-muted">Direct farmgate premiums, co-op ownership stakes in processing, and profit dividends funded back to farming communities.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     WHY PHILIPPINE UBE
+     ============================================================ -->
+<section class="section why-section">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-eyebrow">Why Philippine Ube</div>
+      <h2 class="display-md section-title">The original reigns<br/><em style="font-style:normal;color:var(--purple-600);">supreme.</em></h2>
+      <p class="body-lg section-subtitle text-muted">Endemic to the Philippines, cultivated for centuries. No substitute comes close.</p>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:16px;justify-content:center;margin-bottom:48px;" class="fade-up">
+      <div class="variety-badge">🏆 Kinampay, Bohol — Heritage Variety</div>
+      <span class="badge badge-gold">Golden Seal Certified</span>
+    </div>
+
+    <div class="why-grid stagger">
+      <div class="why-card">
+        <div class="why-card-icon">🌺</div>
+        <div class="why-card-title">Unmatched Aroma & Deep Violet Hue</div>
+        <div class="why-card-desc">The Kinampay variety from Bohol has an aromatic profile and deep violet pigmentation impossible to replicate with sweet potato substitutes used by foreign competitors.</div>
+      </div>
+      <div class="why-card gold">
+        <div class="why-card-icon">🌋</div>
+        <div class="why-card-title">Ideal Terroir — Volcanic Soils, Tropical Climate</div>
+        <div class="why-card-desc">Bohol's unique soil composition and concentrated tropical climate produce a flavor intensity found nowhere else. A true product of terroir, like Champagne.</div>
+      </div>
+      <div class="why-card gold">
+        <div class="why-card-icon">🏛️</div>
+        <div class="why-card-title">Centuries of Cultural Integration</div>
+        <div class="why-card-desc">Ube is a cultural icon woven into Filipino life — fiestas, halaya, celebrations. That authenticity is embedded in every harvest, not manufactured.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-card-icon">✅</div>
+        <div class="why-card-title">100% Pure — No Fillers, Fully Traceable</div>
+        <div class="why-card-desc">Unlike Chinese or Vietnamese powder marketed as "ube," Vera Heritage products are traceable lot-by-lot, with third-party COA confirming zero maltodextrin or starch fillers.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PRODUCTS
+     ============================================================ -->
+<section class="section products-section" id="products">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-eyebrow">Our Products</div>
+      <h2 class="display-md section-title">Premium ube.<br/>Every form.</h2>
+      <p class="body-lg section-subtitle text-muted">From shelf-stable export-grade powder to artisanal halaya, every product is certified, traceable, and 100% Philippine origin.</p>
+    </div>
+
+    <div class="grid-3 stagger" style="align-items:start;">
+      <div class="product-card">
+        <div class="product-card-visual product-visual-1">🫙</div>
+        <div class="product-card-body">
+          <div class="product-card-tag">Best Seller — Export Grade</div>
+          <div class="product-card-title">Ube Powder / Flour</div>
+          <div class="product-card-desc">Shelf-stable, B2B-ready. Fine-milled from certified Kinampay. Ideal for food manufacturers, bakeries, and beverage brands. 12-month shelf life.</div>
+        </div>
+        <div class="product-card-footer">
+          <div class="flex gap-8">
+            <span class="badge badge-success badge-dot">COA Certified</span>
+            <span class="badge badge-purple">HACCP</span>
+          </div>
+          <a href="portal.html" class="btn btn-primary btn-sm">Inquire →</a>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-card-visual product-visual-2">🍠</div>
+        <div class="product-card-body">
+          <div class="product-card-tag">High Volume</div>
+          <div class="product-card-title">Frozen / Grated / Puree</div>
+          <div class="product-card-desc">IQF frozen grated ube and vacuum-packed puree/paste. Preferred by Filipino food channels and large-scale bakery importers. Cold-chain managed.</div>
+        </div>
+        <div class="product-card-footer">
+          <div class="flex gap-8">
+            <span class="badge badge-success badge-dot">FDA Registered</span>
+          </div>
+          <a href="portal.html" class="btn btn-primary btn-sm">Inquire →</a>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-card-visual product-visual-3">🍯</div>
+        <div class="product-card-body">
+          <div class="product-card-tag">Artisan</div>
+          <div class="product-card-title">Halaya / Jam / Spread</div>
+          <div class="product-card-desc">Traditional Filipino ube halaya and spreads. Retail-ready packaging. Perfect for specialty food retailers, gift markets, and Filipino diaspora channels.</div>
+        </div>
+        <div class="product-card-footer">
+          <div class="flex gap-8">
+            <span class="badge badge-gold">Retail Ready</span>
+          </div>
+          <a href="portal.html" class="btn btn-primary btn-sm">Inquire →</a>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-card-visual product-visual-4">🧪</div>
+        <div class="product-card-body">
+          <div class="product-card-tag">Specialty</div>
+          <div class="product-card-title">Extract / Flavor</div>
+          <div class="product-card-desc">Concentrated natural ube extract for food & beverage applications. Used by ice cream makers, confectioneries, and beverage brands globally.</div>
+        </div>
+        <div class="product-card-footer">
+          <div class="flex gap-8">
+            <span class="badge badge-purple">Food-Grade</span>
+          </div>
+          <a href="portal.html" class="btn btn-primary btn-sm">Inquire →</a>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-card-visual product-visual-5">📦</div>
+        <div class="product-card-body">
+          <div class="product-card-tag">Fresh / Seasonal</div>
+          <div class="product-card-title">Fresh Whole Ube</div>
+          <div class="product-card-desc">Fresh whole ube harvested Nov–Dec. Phytosanitary certified for air freight. Premium Kinampay and standard cultivars. Minimum order quantities apply.</div>
+        </div>
+        <div class="product-card-footer">
+          <div class="flex gap-8">
+            <span class="badge badge-warning">Seasonal</span>
+          </div>
+          <a href="portal.html" class="btn btn-primary btn-sm">Inquire →</a>
+        </div>
+      </div>
+
+      <!-- CTA card -->
+      <div class="product-card card-purple" style="display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:20px;">
+        <div style="font-size:2.5rem;">🌐</div>
+        <h3 class="h3" style="color:#fff;">Need a custom specification?</h3>
+        <p style="color:rgba(255,255,255,.65);font-size:.9rem;line-height:1.7;">We work with buyers on custom grades, particle sizes, packaging, and documentation requirements. Talk to our export team.</p>
+        <a href="portal.html" class="btn btn-gold btn-sm">Open a Request</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     MARKET OPPORTUNITY
+     ============================================================ -->
+<section class="section market-section">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-eyebrow" style="color:var(--gold-400);">Market Opportunity</div>
+      <h2 class="display-md section-title" style="color:#fff;">A $943M market.<br/>The Philippines captures <em style="font-style:normal;color:var(--gold-400);">less than 1%.</em></h2>
+      <p class="body-lg section-subtitle" style="color:rgba(255,255,255,.5);margin:0 auto;">Global demand is accelerating. Philippine supply is declining. Vera Heritage is closing the gap.</p>
+    </div>
+
+    <div class="grid-4 stagger" style="margin-top:56px;">
+      <div class="market-card">
+        <div class="market-number">$455<span style="font-size:1.2rem;color:var(--gold-300);">M</span></div>
+        <div class="market-label">Global Ube Market (2024)</div>
+        <div class="market-source">Transparency Market Research</div>
+      </div>
+      <div class="market-card">
+        <div class="market-number">$943<span style="font-size:1.2rem;color:var(--gold-300);">M</span></div>
+        <div class="market-label">Projected by 2035</div>
+        <div class="market-source">6.9% CAGR — TMR</div>
+      </div>
+      <div class="market-card">
+        <div class="market-number">$3<span style="font-size:1.2rem;color:var(--gold-300);">M</span></div>
+        <div class="market-label">PH True-Ube Exports Today</div>
+        <div class="market-source">DTI / PSA OpenSTAT, 2025</div>
+      </div>
+      <div class="market-card">
+        <div class="market-number">$47<span style="font-size:1.2rem;color:var(--gold-300);">M</span></div>
+        <div class="market-label">PH Target at 5% Market Share</div>
+        <div class="market-source">15× current estimated exports</div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:56px;" class="fade-up">
+      <p style="color:rgba(255,255,255,.4);font-size:.85rem;max-width:700px;margin:0 auto 32px;">
+        "America's Love of Ube is Straining Supplies in the Philippines" — Bloomberg. "The World Wants More Ube. Philippine Farmers Are Struggling to Keep Up." — New York Times. The moment is now.
+      </p>
+      <a href="portal.html" class="btn btn-gold btn-lg">Partner With Vera Heritage</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FARMER IMPACT
+     ============================================================ -->
+<section class="section farmer-section">
+  <div class="container">
+    <div class="farmer-mission-box">
+      <div class="relative">
+        <div class="section-eyebrow" style="color:var(--gold-300);">Farmer-First Mission</div>
+        <h2 class="farmer-mission-title">
+          We share profits <em>equitably</em><br/>with every farmer we work with.
+        </h2>
+        <p style="color:rgba(255,255,255,.65);max-width:620px;font-size:1rem;line-height:1.8;margin-bottom:12px;">
+          Filipino ube farmers currently capture only 5–8% of domestic retail value and just 2–4% of export value. A farmer selling at ₱50/kg sees that same ube retail for ₱700–₱1,800/kg at export. Vera eliminates the chain of intermediaries.
+        </p>
+        <div class="impact-grid stagger">
+          <div class="impact-item">
+            <div class="impact-num">Direct</div>
+            <div class="impact-lbl">Farmgate Premium Pricing — no provincial wholesalers</div>
+          </div>
+          <div class="impact-item">
+            <div class="impact-num">Co-op</div>
+            <div class="impact-lbl">Farmer ownership stakes in our processing margin</div>
+          </div>
+          <div class="impact-item">
+            <div class="impact-num">Fund</div>
+            <div class="impact-lbl">Community dividend fund for agricultural inputs</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:64px;">
+      <div class="grid-2" style="gap:48px;align-items:start;">
+        <div class="fade-up">
+          <div class="section-eyebrow">AI-Enabled Transparency</div>
+          <h3 class="h2" style="margin-bottom:16px;">Farmers see real-time market value of their crop.</h3>
+          <p class="body-md text-muted">Our digital farmer dashboards give every partner farmer visibility into international ube prices, so they negotiate from knowledge — not desperation. No more depressed harvest-season prices.</p>
+          <a href="farmers.html" class="btn btn-outline" style="margin-top:28px;">View Farmer Network →</a>
+        </div>
+        <div class="fade-up" style="display:flex;flex-direction:column;gap:16px;">
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-dot gold"></div>
+              <div class="timeline-date">Planting Phase</div>
+              <div class="timeline-title">Seed & input support provided</div>
+              <div class="timeline-body">Verified Kinampay planting material + fertilizer access via Vera's co-op fund.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-date">8–10 Month Grow Cycle</div>
+              <div class="timeline-title">Real-time price visibility</div>
+              <div class="timeline-body">Farmers track live international pricing via the Vera dashboard. No information asymmetry.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot success"></div>
+              <div class="timeline-date">Harvest (Nov–Dec)</div>
+              <div class="timeline-title">Direct farmgate collection at premium</div>
+              <div class="timeline-body">Grade A Kinampay collected at 2–3× standard market prices. Payment within 72 hours.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot gold"></div>
+              <div class="timeline-date">Export Sale</div>
+              <div class="timeline-title">Profit dividend returned to farm community</div>
+              <div class="timeline-body">A portion of every export sale is funneled back to the co-op community fund.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     EXPORT DESTINATIONS
+     ============================================================ -->
+<section class="section destinations-section">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-eyebrow">Export Markets</div>
+      <h2 class="display-md section-title">Reaching buyers<br/>across the globe.</h2>
+      <p class="body-lg section-subtitle text-muted">Philippine ube demand is strongest in diaspora markets and premium food-service channels across six major regions.</p>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;max-width:720px;margin:0 auto;" class="stagger">
+      <div class="dest-item">
+        <div class="dest-flag">🇺🇸</div>
+        <div>
+          <div class="dest-name">United States</div>
+          <div class="dest-desc">Largest market — diaspora + mainstream trend (Starbucks, Jollibee, grocery chains)</div>
+        </div>
+        <div class="dest-bar-wrap">
+          <div class="dest-bar"><div class="dest-fill" style="width:90%"></div></div>
+        </div>
+      </div>
+      <div class="dest-item">
+        <div class="dest-flag">🇯🇵</div>
+        <div>
+          <div class="dest-name">Japan</div>
+          <div class="dest-desc">Premium food ingredient market, specialty convenience, food-service</div>
+        </div>
+        <div class="dest-bar-wrap">
+          <div class="dest-bar"><div class="dest-fill" style="width:55%"></div></div>
+        </div>
+      </div>
+      <div class="dest-item">
+        <div class="dest-flag">🇨🇳</div>
+        <div>
+          <div class="dest-name">China</div>
+          <div class="dest-desc">Growing premium ingredient market, bubble tea chains, bakery sector</div>
+        </div>
+        <div class="dest-bar-wrap">
+          <div class="dest-bar"><div class="dest-fill" style="width:48%"></div></div>
+        </div>
+      </div>
+      <div class="dest-item">
+        <div class="dest-flag">🇦🇪</div>
+        <div>
+          <div class="dest-name">Middle East</div>
+          <div class="dest-desc">Filipino diaspora hubs — UAE, Saudi Arabia, Qatar</div>
+        </div>
+        <div class="dest-bar-wrap">
+          <div class="dest-bar"><div class="dest-fill" style="width:40%"></div></div>
+        </div>
+      </div>
+      <div class="dest-item">
+        <div class="dest-flag">🇬🇧</div>
+        <div>
+          <div class="dest-name">United Kingdom & Italy</div>
+          <div class="dest-desc">Specialty food retail, European case shipments</div>
+        </div>
+        <div class="dest-bar-wrap">
+          <div class="dest-bar"><div class="dest-fill" style="width:30%"></div></div>
+        </div>
+      </div>
+      <div class="dest-item">
+        <div class="dest-flag">🇦🇺</div>
+        <div>
+          <div class="dest-name">Australia & New Zealand</div>
+          <div class="dest-desc">Strong diaspora demand, growing retail presence</div>
+        </div>
+        <div class="dest-bar-wrap">
+          <div class="dest-bar"><div class="dest-fill" style="width:28%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CERTIFICATIONS
+     ============================================================ -->
+<section class="section-sm cert-section">
+  <div class="container">
+    <div class="section-header center" style="margin-bottom:40px;">
+      <div class="section-eyebrow">Certifications & Compliance</div>
+      <h2 class="h2 section-title">Documentation buyers need, ready.</h2>
+    </div>
+    <div class="grid-4 stagger">
+      <div class="cert-item"><div class="cert-icon">🧬</div><div class="cert-name">Philippine FDA</div><div class="cert-desc">Food safety registration for all product lines</div></div>
+      <div class="cert-item"><div class="cert-icon">📋</div><div class="cert-name">Certificate of Analysis</div><div class="cert-desc">Per-batch COA from accredited laboratories</div></div>
+      <div class="cert-item"><div class="cert-icon">🏭</div><div class="cert-name">HACCP Compliant</div><div class="cert-desc">Hazard analysis & critical control point certified</div></div>
+      <div class="cert-item"><div class="cert-icon">🔬</div><div class="cert-name">Shelf-Life Testing</div><div class="cert-desc">Third-party validated stability studies per product</div></div>
+      <div class="cert-item"><div class="cert-icon">⚠️</div><div class="cert-name">Allergen Declarations</div><div class="cert-desc">Full allergen documentation for all markets</div></div>
+      <div class="cert-item"><div class="cert-icon">🌿</div><div class="cert-name">Nutritional Panels</div><div class="cert-desc">US, EU, and Philippine format nutrition labels</div></div>
+      <div class="cert-item"><div class="cert-icon">📦</div><div class="cert-name">Export Packaging</div><div class="cert-desc">Lot-numbered, export-compliant packaging standards</div></div>
+      <div class="cert-item"><div class="cert-icon">🌾</div><div class="cert-name">Single-Origin Cert</div><div class="cert-desc">Traceable Kinampay provenance documentation</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     B2B PORTAL CTA
+     ============================================================ -->
+<section class="section portal-cta">
+  <div class="container">
+    <div class="portal-cta-box">
+      <div class="portal-cta-inner">
+        <div class="section-eyebrow" style="justify-content:center;color:var(--gold-300);">For Buyers & Exporters</div>
+        <h2 class="portal-cta-title">Your <em>complete</em> ube<br/>sourcing platform.</h2>
+        <p class="portal-cta-sub">Order, track, document, and communicate — all in one AI-powered B2B portal. Built for international buyers who need reliability and transparency.</p>
+        <div class="portal-features">
+          <div class="portal-feat"><div class="portal-feat-icon">🛒</div><div class="portal-feat-label">Place Orders</div></div>
+          <div class="portal-feat"><div class="portal-feat-icon">📦</div><div class="portal-feat-label">Track Shipments</div></div>
+          <div class="portal-feat"><div class="portal-feat-icon">📄</div><div class="portal-feat-label">Download Docs</div></div>
+          <div class="portal-feat"><div class="portal-feat-icon">🤖</div><div class="portal-feat-label">AI Assistant</div></div>
+          <div class="portal-feat"><div class="portal-feat-icon">🌾</div><div class="portal-feat-label">Farmer Profiles</div></div>
+        </div>
+        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+          <a href="portal.html" class="btn btn-gold btn-xl">Access Portal →</a>
+          <a href="#contact" class="btn btn-outline-white btn-xl">Request Demo</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CONTACT
+     ============================================================ -->
+<section class="section contact-section" id="contact">
+  <div class="container">
+    <div class="grid-2" style="gap:80px;align-items:start;">
+      <div>
+        <div class="section-eyebrow">Get in Touch</div>
+        <h2 class="display-md section-title">Ready to source<br/>authentic ube?</h2>
+        <p class="body-lg text-muted" style="margin-bottom:40px;">Whether you're a first-time buyer, a large-volume importer, or a brand looking for a private-label partner — we're ready to talk.</p>
+        <div class="contact-info">
+          <div class="contact-item">
+            <div class="contact-icon">🌏</div>
+            <div>
+              <div class="contact-label">Headquarters</div>
+              <div class="contact-value">Philippines (Exporting Globally)</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">✉️</div>
+            <div>
+              <div class="contact-label">Export Inquiries</div>
+              <div class="contact-value">export@veraheritage.ph</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">🌾</div>
+            <div>
+              <div class="contact-label">Farmer Partnerships</div>
+              <div class="contact-value">farmers@veraheritage.ph</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">🤖</div>
+            <div>
+              <div class="contact-label">24/7 AI Assistant</div>
+              <div class="contact-value">Use the chat widget → bottom right</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact form -->
+      <div class="card" style="padding:40px;">
+        <h3 class="h3" style="margin-bottom:24px;">Send an Inquiry</h3>
+        <form id="contactForm" onsubmit="handleContact(event)">
+          <div class="grid-2" style="gap:16px;">
+            <div class="form-group">
+              <label class="form-label">First Name</label>
+              <input type="text" class="form-input" placeholder="John" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Last Name</label>
+              <input type="text" class="form-input" placeholder="Smith" required/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Company / Organisation</label>
+            <input type="text" class="form-input" placeholder="Your Company Ltd." required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-input" placeholder="you@company.com" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Country</label>
+            <select class="form-input form-select">
+              <option>United States</option>
+              <option>Japan</option>
+              <option>China</option>
+              <option>United Kingdom</option>
+              <option>Australia</option>
+              <option>United Arab Emirates</option>
+              <option>Italy</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Product Interest</label>
+            <select class="form-input form-select">
+              <option>Ube Powder / Flour</option>
+              <option>Frozen / Puree / Paste</option>
+              <option>Halaya / Jam / Spread</option>
+              <option>Extract / Flavoring</option>
+              <option>Fresh Whole Ube</option>
+              <option>Multiple / Custom Spec</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Message</label>
+            <textarea class="form-input form-textarea" placeholder="Tell us about your volume requirements, timeline, or any questions..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg" style="width:100%;">Send Inquiry</button>
+        </form>
+        <div id="formSuccess" style="display:none;text-align:center;padding:32px 0;">
+          <div style="font-size:2.5rem;margin-bottom:12px;">✅</div>
+          <div class="h4">Message sent!</div>
+          <p class="body-sm text-muted" style="margin-top:8px;">Our export team will respond within 24 business hours.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <img src="assets/logo.svg" alt="Vera Heritage" style="height:56px;filter:brightness(0) invert(1);opacity:.85;"/>
+        <p class="footer-brand-desc">Premium Philippine ube, traceable from Bohol's heritage Kinampay farms to global buyers. Purple is the new Gold.</p>
+        <div class="footer-social" style="margin-top:24px;">
+          <a href="#" title="LinkedIn">in</a>
+          <a href="#" title="Instagram">📸</a>
+          <a href="#" title="Facebook">f</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Products</div>
+        <div class="footer-links">
+          <a href="#products" class="footer-link">Ube Powder / Flour</a>
+          <a href="#products" class="footer-link">Frozen / Puree</a>
+          <a href="#products" class="footer-link">Halaya / Jam</a>
+          <a href="#products" class="footer-link">Extract / Flavor</a>
+          <a href="#products" class="footer-link">Fresh Whole Ube</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Platform</div>
+        <div class="footer-links">
+          <a href="portal.html" class="footer-link">B2B Buyer Portal</a>
+          <a href="farmers.html" class="footer-link">Farmer Network</a>
+          <a href="supply-chain.html" class="footer-link">Supply Chain Tracker</a>
+          <a href="#" class="footer-link">AI Assistant</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Company</div>
+        <div class="footer-links">
+          <a href="#story" class="footer-link">Our Story</a>
+          <a href="#" class="footer-link">Certifications</a>
+          <a href="#" class="footer-link">Farmer Program</a>
+          <a href="#contact" class="footer-link">Contact</a>
+          <a href="#" class="footer-link">Privacy Policy</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Vera Heritage. All rights reserved. Philippines.</span>
+      <span style="color:rgba(255,255,255,.3);">Purple is the New Gold ™</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     AI CHATBOT
+     ============================================================ -->
+<button class="chatbot-trigger" id="chatTrigger" onclick="toggleChat()" title="Chat with Vera AI">
+  <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  </svg>
+</button>
+<div class="chatbot-window" id="chatWindow">
+  <div class="chatbot-head">
+    <div class="chatbot-head-avatar">🌿</div>
+    <div class="chatbot-head-info">
+      <div class="name">Vera AI Assistant</div>
+      <div class="status">Online — Ready to help</div>
+    </div>
+    <button class="chatbot-head-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chatbot-messages" id="chatMessages"></div>
+  <div class="chatbot-quick" id="quickReplies">
+    <button class="quick-reply" onclick="sendQuick('What products do you export?')">Products</button>
+    <button class="quick-reply" onclick="sendQuick('How do I place an order?')">Order Process</button>
+    <button class="quick-reply" onclick="sendQuick('What certifications do you have?')">Certifications</button>
+    <button class="quick-reply" onclick="sendQuick('Tell me about pricing')">Pricing</button>
+  </div>
+  <div class="chatbot-input-row">
+    <input type="text" class="chatbot-input" id="chatInput" placeholder="Ask about products, orders, traceability…" onkeydown="if(event.key==='Enter')sendChat()"/>
+    <button class="chatbot-send" onclick="sendChat()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/chatbot.js"></script>
+<script>
+  function handleContact(e) {
+    e.preventDefault();
+    document.getElementById('contactForm').style.display = 'none';
+    document.getElementById('formSuccess').style.display = 'block';
+  }
+  function openMobileMenu() {
+    document.getElementById('mobileMenu').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMobileMenu() {
+    document.getElementById('mobileMenu').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('mobileMenuClose').onclick = closeMobileMenu;
+</script>
+</body>
+</html>
