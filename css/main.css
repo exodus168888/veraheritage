@@ -1287,9 +1287,196 @@ tbody tr:hover { background: var(--purple-50); }
 [data-theme="dark"] ::-webkit-scrollbar-track { background: var(--paper-2); }
 [data-theme="dark"] ::-webkit-scrollbar-thumb { background: var(--purple-700); }
 
-/* Fix: headings inside dark-background boxes must stay white regardless of theme */
+/* ============================================================
+   COMPREHENSIVE CONTRAST & DARK MODE FIXES
+   ============================================================ */
+
+/* --- 1. NAV: dark mode — scrolled nav stays dark, NOT light cream --- */
+[data-theme="dark"] .nav.scrolled {
+  background: rgba(18,13,30,.96) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 1px 0 rgba(255,255,255,.06) !important;
+}
+
+/* Nav links always readable on dark nav in dark mode */
+[data-theme="dark"] .nav-link { color: rgba(255,255,255,.75); }
+[data-theme="dark"] .nav-link:hover { color: #fff !important; background: rgba(255,255,255,.1); }
+[data-theme="dark"] .nav-link.active { color: #fff !important; }
+
+/* Hamburger lines visible on dark nav */
+[data-theme="dark"] .nav-mobile-toggle span { background: rgba(255,255,255,.85); }
+
+/* Mobile menu links */
+[data-theme="dark"] .mobile-menu-link { color: rgba(255,255,255,.85) !important; }
+[data-theme="dark"] .mobile-menu-link:hover { color: #fff !important; }
+
+/* --- 2. FOOTER: hardcode dark background — var(--ink) becomes light in dark mode --- */
+[data-theme="dark"] .footer {
+  background: #0d0918 !important;
+  color: rgba(255,255,255,.55);
+}
+[data-theme="dark"] .footer-heading { color: rgba(255,255,255,.85); }
+[data-theme="dark"] .footer-link { color: rgba(255,255,255,.55); }
+[data-theme="dark"] .footer-link:hover { color: var(--gold-400); }
+[data-theme="dark"] .footer-bottom { color: rgba(255,255,255,.35); border-top-color: rgba(255,255,255,.08); }
+[data-theme="dark"] .footer-social a { background: rgba(255,255,255,.08); color: rgba(255,255,255,.5); }
+[data-theme="dark"] .footer-social a:hover { background: var(--purple-700); color: #fff; }
+
+/* --- 3. STAT VALUES: lighter purple for dark backgrounds --- */
+[data-theme="dark"] .stat-value { color: var(--purple-300); }
+[data-theme="dark"] .stat-label { color: rgba(255,255,255,.5); }
+
+/* --- 4. SECTION EYEBROWS: lighter gold for dark backgrounds --- */
+[data-theme="dark"] .section-eyebrow { color: var(--gold-400); }
+[data-theme="dark"] .section-eyebrow::before { background: var(--gold-400); }
+
+/* --- 5. CARD-DARK: must stay truly dark (var(--ink) is now light in dark mode) --- */
+[data-theme="dark"] .card-dark { background: #0d0918 !important; color: #fff; }
+
+/* --- 6. SIDEBAR: stays dark in dark mode --- */
+[data-theme="dark"] .sidebar { background: #0d0918 !important; }
+
+/* --- 7. BTN-OUTLINE: readable on dark backgrounds --- */
+[data-theme="dark"] .btn-outline {
+  color: var(--purple-300);
+  border-color: var(--purple-500);
+}
+[data-theme="dark"] .btn-outline:hover {
+  background: rgba(139,91,199,.15);
+  border-color: var(--purple-300);
+  color: var(--purple-200);
+}
+
+/* --- 8. BTN-GHOST in dark mode --- */
+[data-theme="dark"] .btn-ghost { color: var(--ink-700); }
+[data-theme="dark"] .btn-ghost:hover { background: var(--paper-3); color: var(--ink); }
+
+/* --- 9. TABLE in dark mode --- */
+[data-theme="dark"] thead th { background: var(--paper-3); color: var(--ink-300); }
+[data-theme="dark"] tbody td { color: var(--ink); border-top-color: var(--paper-3); }
+[data-theme="dark"] tbody tr:hover { background: rgba(139,91,199,.08); }
+
+/* --- 10. PROGRESS BARS in dark mode --- */
+[data-theme="dark"] .progress-track { background: var(--paper-3); }
+
+/* --- 11. PURPLE / DARK BACKGROUND SECTIONS — all text must be white in both modes --- */
+/* Hero */
+.hero h1, .hero h2, .hero h3, .hero p { color: inherit; }
+
+/* Farmer Mission Box */
+.farmer-mission-box h1,
 .farmer-mission-box h2,
 .farmer-mission-box h3,
+.farmer-mission-box h4,
+.farmer-mission-box p,
+.farmer-mission-box li,
 .farmer-mission-box .farmer-mission-title { color: #fff !important; }
-.market-section h2 { color: #fff !important; }
-.hero h1, .hero h2 { color: inherit; }
+.farmer-mission-box .section-eyebrow { color: var(--gold-400) !important; }
+.farmer-mission-box .section-eyebrow::before { background: var(--gold-400) !important; }
+/* Text with explicit reduced opacity stays subtle */
+.farmer-mission-box p[style*="rgba"] { color: rgba(255,255,255,.75) !important; }
+
+/* Market / dark sections */
+.market-section h1,
+.market-section h2,
+.market-section h3,
+.market-section h4 { color: #fff !important; }
+.market-section .section-eyebrow { color: var(--gold-400) !important; }
+.market-section .section-eyebrow::before { background: var(--gold-400) !important; }
+
+/* Stats bar (purple gradient bg) */
+.stats-bar .stat-value { color: #fff !important; }
+.stats-bar .stat-label { color: rgba(255,255,255,.55) !important; }
+.stats-bar .section-eyebrow { color: var(--gold-400) !important; }
+
+/* Portal CTA box (if it has a dark/purple bg) */
+.portal-cta-box h1,
+.portal-cta-box h2,
+.portal-cta-box h3 { color: #fff !important; }
+
+/* Card-purple (gradient purple card) */
+.card-purple h1,
+.card-purple h2,
+.card-purple h3,
+.card-purple h4 { color: #fff !important; }
+
+/* Card-dark */
+.card-dark h1,
+.card-dark h2,
+.card-dark h3,
+.card-dark h4 { color: #fff !important; }
+
+/* --- 12. DARK MODE: headings in non-purple sections use light ink --- */
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6 { color: var(--ink); }
+
+/* In dark mode, purple/dark sections still need white headings */
+[data-theme="dark"] .farmer-mission-box h1,
+[data-theme="dark"] .farmer-mission-box h2,
+[data-theme="dark"] .farmer-mission-box h3,
+[data-theme="dark"] .farmer-mission-box h4 { color: #fff !important; }
+[data-theme="dark"] .market-section h1,
+[data-theme="dark"] .market-section h2,
+[data-theme="dark"] .market-section h3 { color: #fff !important; }
+[data-theme="dark"] .portal-cta-box h2,
+[data-theme="dark"] .portal-cta-box h3 { color: #fff !important; }
+[data-theme="dark"] .card-dark h2,
+[data-theme="dark"] .card-dark h3 { color: #fff !important; }
+[data-theme="dark"] .stats-bar .stat-value { color: #fff !important; }
+
+/* --- 13. DARK MODE: impact stat items inside dark purple sections --- */
+[data-theme="dark"] .impact-item .stat-value { color: var(--gold-400); }
+[data-theme="dark"] .impact-label { color: rgba(255,255,255,.65) !important; }
+
+/* --- 14. TIMELINE dot border matches background in dark mode --- */
+[data-theme="dark"] .timeline-dot { border-color: var(--paper); }
+
+/* --- 15. CHATBOT window in dark mode --- */
+[data-theme="dark"] .chatbot-window { background: var(--paper-2); }
+[data-theme="dark"] .chat-msg.bot .chat-bubble { background: var(--paper-3); color: var(--ink); }
+[data-theme="dark"] .chatbot-input { background: var(--paper-3); border-color: rgba(255,255,255,.1); color: var(--ink); }
+[data-theme="dark"] .chatbot-input-row,
+[data-theme="dark"] .chatbot-quick { border-top-color: rgba(255,255,255,.08); }
+[data-theme="dark"] .quick-reply { background: rgba(139,91,199,.12); border-color: var(--purple-700); color: var(--purple-300); }
+[data-theme="dark"] .quick-reply:hover { background: rgba(139,91,199,.25); border-color: var(--purple-500); color: #fff; }
+[data-theme="dark"] .chat-dot { background: var(--ink-300); }
+
+/* --- 16. FORM ELEMENTS better dark mode --- */
+[data-theme="dark"] .form-input:focus { background: var(--paper-2); }
+[data-theme="dark"] .form-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a898be' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); }
+
+/* --- 17. BADGE fix in dark mode (light bg badges need darker text) --- */
+[data-theme="dark"] .badge-purple { background: rgba(107,53,168,.3); color: var(--purple-300); }
+[data-theme="dark"] .badge-gold   { background: rgba(201,168,76,.2); color: var(--gold-300); }
+
+/* --- 18. CHAIN FLOW in dark mode --- */
+[data-theme="dark"] .chain-icon { background: var(--paper-2); border-color: var(--paper-3); }
+[data-theme="dark"] .chain-label { color: var(--ink-700); }
+[data-theme="dark"] .chain-sub { color: var(--ink-300); }
+
+/* --- 19. KPI cards in dark mode --- */
+[data-theme="dark"] .kpi-card { background: var(--paper-2); border-color: var(--paper-3); }
+[data-theme="dark"] .kpi-number { color: var(--ink); }
+[data-theme="dark"] .kpi-label { color: var(--ink-300); }
+[data-theme="dark"] .kpi-icon.purple { background: rgba(107,53,168,.25); }
+[data-theme="dark"] .kpi-icon.gold   { background: rgba(201,168,76,.18); }
+[data-theme="dark"] .kpi-icon.green  { background: rgba(26,124,78,.25); }
+[data-theme="dark"] .kpi-icon.blue   { background: rgba(26,95,168,.25); }
+[data-theme="dark"] .dashboard-header { background: var(--paper-2); border-bottom-color: var(--paper-3); }
+
+/* --- 20. MAP markers in dark mode --- */
+[data-theme="dark"] .map-region { fill: var(--purple-800); stroke: var(--paper-3); }
+[data-theme="dark"] .map-region:hover { fill: var(--purple-600); }
+[data-theme="dark"] .map-region.active { fill: var(--purple-400); }
+
+/* --- 21. TABLE WRAP in dark mode --- */
+[data-theme="dark"] .table-wrap { border-color: var(--paper-3); }
+
+/* --- 22. NAV dark-mode toggle button more visible --- */
+[data-theme="dark"] .dark-mode-toggle { background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.12); color: var(--gold-400); }
+[data-theme="dark"] .dark-mode-toggle:hover { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.2); }
