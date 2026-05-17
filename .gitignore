@@ -1,0 +1,16 @@
+# Business source documents (large files, keep locally only)
+Ube - Vera Heritage/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+*.swp
+*.swo
+
+# Node (if added later)
+node_modules/
+.env
+.env.local
