@@ -1,0 +1,17 @@
+# Cloudflare Pages Redirects
+# Format: /source  /destination  status-code
+# NOTE: Cloudflare Pages Pretty URLs auto-serves /portal → portal.html etc.
+# Only define TRUE aliases here (different path → destination)
+
+# Convenience shortcuts
+/chain           /supply-chain        302
+/dashboard       /portal              302
+/login           /portal              302
+/track           /supply-chain        302
+/products        /#products           302
+/about           /#story              302
+/contact         /#contact            302
+
+# Legacy / common misspellings
+/farmer          /farmers             302
+/supply_chain    /supply-chain        302

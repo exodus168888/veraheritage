@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>B2B Portal — Vera Heritage</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml"/>
+  <link rel="stylesheet" href="css/main.css"/>
+  <style>
+    body { background: var(--paper); }
+
+    /* Login screen */
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--purple-950), var(--purple-800));
+      position: relative;
+      overflow: hidden;
+    }
+    .login-bg-orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .login-bg-orb-1 {
+      width: 600px; height: 600px;
+      top: -200px; right: -200px;
+      background: radial-gradient(circle, rgba(201,168,76,.12), transparent 70%);
+    }
+    .login-bg-orb-2 {
+      width: 400px; height: 400px;
+      bottom: -100px; left: -100px;
+      background: radial-gradient(circle, rgba(139,91,199,.15), transparent 70%);
+    }
+    .login-card {
+      width: 100%;
+      max-width: 440px;
+      background: rgba(255,255,255,.05);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius-xl);
+      padding: 48px;
+      position: relative;
+      z-index: 2;
+    }
+    .login-logo { display: flex; justify-content: center; margin-bottom: 36px; }
+    .login-logo img { height: 80px; filter: brightness(0) invert(1); opacity: .9; }
+    .login-title { font-family: var(--font-serif); font-size: 1.6rem; font-weight: 600; color: #fff; text-align: center; margin-bottom: 8px; }
+    .login-sub { font-size: .875rem; color: rgba(255,255,255,.45); text-align: center; margin-bottom: 32px; }
+    .login-label { display: block; font-size: .75rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 8px; }
+    .login-input {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(255,255,255,.08);
+      border: 1.5px solid rgba(255,255,255,.14);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-size: .9rem;
+      font-family: var(--font-sans);
+      margin-bottom: 16px;
+      transition: border-color var(--t-fast);
+    }
+    .login-input::placeholder { color: rgba(255,255,255,.3); }
+    .login-input:focus { border-color: var(--gold-400); outline: none; }
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--gold-500);
+      color: var(--ink);
+      border: none;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      font-size: .9rem;
+      letter-spacing: .04em;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all var(--t-base);
+    }
+    .login-btn:hover { background: var(--gold-600); transform: translateY(-2px); box-shadow: var(--shadow-gold); }
+    .login-demo { font-size: .75rem; color: rgba(255,255,255,.3); text-align: center; margin-top: 16px; }
+    .login-demo strong { color: rgba(255,255,255,.6); }
+    .login-error { background: rgba(176,42,42,.25); border: 1px solid rgba(176,42,42,.4); color: #FF8888; border-radius: var(--radius-sm); padding: 10px 14px; font-size: .82rem; margin-bottom: 16px; display: none; }
+
+    /* Dashboard */
+    .dash { display: none; }
+    .dash.active { display: flex; min-height: 100vh; }
+
+    /* Charts area */
+    .chart-container { position: relative; height: 220px; }
+
+    /* Order form modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(28,18,37,.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--t-base);
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: #fff;
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: scale(.94) translateY(20px);
+      transition: transform var(--t-base);
+    }
+    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+    .modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+    .modal-title { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 600; }
+    .modal-close { background: var(--paper-2); border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: 1rem; transition: background var(--t-fast); }
+    .modal-close:hover { background: var(--paper-3); }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 4px; background: var(--paper-2); padding: 4px; border-radius: var(--radius-md); margin-bottom: 28px; }
+    .tab-btn {
+      flex: 1;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: none;
+      font-size: .83rem;
+      font-weight: 600;
+      color: var(--ink-300);
+      cursor: pointer;
+      transition: all var(--t-fast);
+      white-space: nowrap;
+    }
+    .tab-btn.active { background: #fff; color: var(--purple-700); box-shadow: var(--shadow-xs); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Tracking timeline */
+    .track-card {
+      background: #fff;
+      border: 1px solid var(--paper-3);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+    .track-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+    .track-id { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700; }
+    .track-steps { display: flex; align-items: center; gap: 0; margin: 24px 0; }
+    .track-step { flex: 1; text-align: center; position: relative; }
+    .track-step::before {
+      content: '';
+      position: absolute;
+      left: 50%; top: 16px;
+      width: 100%; height: 2px;
+      background: var(--paper-3);
+      transform: translateX(0);
+    }
+    .track-step:last-child::before { display: none; }
+    .track-step.done::before { background: var(--purple-400); }
+    .track-dot {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--paper-3);
+      border: 2px solid var(--paper-3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 8px;
+      font-size: .8rem;
+      position: relative;
+      z-index: 1;
+    }
+    .track-step.done .track-dot { background: var(--purple-600); border-color: var(--purple-600); color: #fff; }
+    .track-step.active .track-dot { background: #fff; border-color: var(--purple-600); color: var(--purple-600); box-shadow: 0 0 0 4px var(--purple-100); }
+    .track-step-label { font-size: .68rem; font-weight: 600; color: var(--ink-300); }
+    .track-step.done .track-step-label, .track-step.active .track-step-label { color: var(--purple-700); }
+
+    /* Document vault */
+    .doc-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: var(--paper);
+      border: 1px solid var(--paper-3);
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+      transition: all var(--t-fast);
+    }
+    .doc-item:hover { border-color: var(--purple-300); background: var(--purple-50); }
+    .doc-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .doc-name { font-size: .875rem; font-weight: 600; }
+    .doc-meta { font-size: .75rem; color: var(--ink-300); }
+    .doc-dl { margin-left: auto; }
+
+    /* AI assistant panel */
+    .ai-panel { display: flex; flex-direction: column; height: 520px; }
+    .ai-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; background: var(--paper); border-radius: var(--radius-md); border: 1px solid var(--paper-3); margin-bottom: 12px; }
+    .ai-input-row { display: flex; gap: 10px; }
+    .ai-input { flex: 1; padding: 11px 16px; border-radius: var(--radius-full); background: #fff; border: 1.5px solid var(--paper-3); font-size: .875rem; font-family: var(--font-sans); transition: border-color var(--t-fast); }
+    .ai-input:focus { border-color: var(--purple-400); outline: none; }
+    .ai-send { width: 40px; height: 40px; border-radius: 50%; background: var(--purple-600); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--t-fast); flex-shrink: 0; color: #fff; font-size: 1rem; }
+    .ai-send:hover { background: var(--purple-700); }
+
+    /* Inventory cards */
+    .inv-card { background: #fff; border: 1px solid var(--paper-3); border-radius: var(--radius-md); padding: 20px 24px; }
+    .inv-product { font-weight: 700; font-size: .95rem; margin-bottom: 4px; }
+    .inv-grade { font-size: .75rem; color: var(--ink-300); margin-bottom: 12px; }
+    .inv-stock { font-family: var(--font-serif); font-size: 1.8rem; font-weight: 700; color: var(--purple-700); line-height: 1; }
+    .inv-unit { font-size: .8rem; color: var(--ink-300); margin-top: 2px; }
+    .inv-bar { margin-top: 10px; }
+
+    /* Notification dot */
+    .notif-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--danger); border: 2px solid #fff; position: absolute; top: -2px; right: -2px; }
+
+    /* Dashboard section title */
+    .ds-title { font-family: var(--font-serif); font-size: 1.25rem; font-weight: 700; margin-bottom: 16px; }
+
+    /* Quick action buttons */
+    .qa-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
+    .qa-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 8px;
+      background: #fff;
+      border: 1.5px solid var(--paper-3);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--t-fast);
+      font-family: var(--font-sans);
+    }
+    .qa-btn:hover { border-color: var(--purple-400); background: var(--purple-50); transform: translateY(-2px); }
+    .qa-icon { font-size: 1.5rem; }
+    .qa-label { font-size: .72rem; font-weight: 600; color: var(--ink-500); text-align: center; }
+
+    /* Mobile sidebar toggle */
+    .sidebar-mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      padding: 8px;
+    }
+    @media (max-width: 1199px) {
+      .sidebar-mobile-toggle { display: flex; }
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .qa-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 767px) {
+      .kpi-grid { grid-template-columns: 1fr 1fr; }
+      .dashboard-content { padding: 20px; }
+      .login-card { padding: 32px 24px; margin: 20px; }
+      .modal { margin: 16px; padding: 28px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     LOGIN SCREEN
+     ============================================================ -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-bg-orb login-bg-orb-1"></div>
+  <div class="login-bg-orb login-bg-orb-2"></div>
+  <div class="login-card">
+    <div class="login-logo">
+      <img src="assets/logo.svg" alt="Vera Heritage"/>
+    </div>
+    <div class="login-title">B2B Buyer Portal</div>
+    <div class="login-sub">Sign in to access orders, tracking, documents & AI assistant</div>
+    <div class="login-error" id="loginError">Incorrect credentials. Try: buyer@veraheritage.com / VeraDemo2026</div>
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <label class="login-label">Email Address</label>
+      <input type="email" class="login-input" id="loginEmail" placeholder="you@company.com" value="buyer@veraheritage.com"/>
+      <label class="login-label">Password</label>
+      <input type="password" class="login-input" id="loginPass" placeholder="••••••••••" value="VeraDemo2026"/>
+      <button type="submit" class="login-btn">Sign In to Portal →</button>
+    </form>
+    <div class="login-demo">Demo credentials: <strong>buyer@veraheritage.com</strong> / <strong>VeraDemo2026</strong></div>
+    <div style="text-align:center;margin-top:20px;">
+      <a href="index.html" style="font-size:.78rem;color:rgba(255,255,255,.35);transition:color .2s;" onmouseover="this.style.color='rgba(255,255,255,.7)'" onmouseout="this.style.color='rgba(255,255,255,.35)'">← Back to Vera Heritage</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     DASHBOARD
+     ============================================================ -->
+<div class="dash" id="dashboard">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="assets/logo.svg" alt="Vera Heritage" style="filter:brightness(0) invert(1);opacity:.85;"/>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Main</div>
+      <a href="#" class="sidebar-link active" onclick="switchTab('overview',this)">
+        <span class="icon">📊</span> Overview
+      </a>
+      <a href="#" class="sidebar-link" onclick="switchTab('orders',this)">
+        <span class="icon">🛒</span> Orders
+        <span class="badge-count">3</span>
+      </a>
+      <a href="#" class="sidebar-link" onclick="switchTab('tracking',this)">
+        <span class="icon">📦</span> Shipment Tracking
+      </a>
+      <a href="#" class="sidebar-link" onclick="switchTab('inventory',this)">
+        <span class="icon">🌾</span> Available Inventory
+      </a>
+      <a href="#" class="sidebar-link" onclick="switchTab('documents',this)">
+        <span class="icon">📄</span> Document Vault
+        <span class="badge-count">5</span>
+      </a>
+      <div class="sidebar-section-label">Network</div>
+      <a href="farmers.html" class="sidebar-link">
+        <span class="icon">🌿</span> Farmer Network
+      </a>
+      <a href="supply-chain.html" class="sidebar-link">
+        <span class="icon">🔗</span> Supply Chain
+      </a>
+      <div class="sidebar-section-label">Support</div>
+      <a href="#" class="sidebar-link" onclick="switchTab('ai',this)">
+        <span class="icon">🤖</span> AI Assistant
+      </a>
+      <a href="#" class="sidebar-link" onclick="switchTab('account',this)">
+        <span class="icon">⚙️</span> Account Settings
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">GB</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name">Global Buyers Inc.</div>
+          <div class="sidebar-user-role">Verified B2B Partner</div>
+        </div>
+        <span style="color:rgba(255,255,255,.3);font-size:.8rem;" onclick="handleLogout()">⏏</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <div class="dashboard-main">
+    <div class="dashboard-header">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <button class="sidebar-mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+        <div>
+          <div class="dashboard-title" id="dashTitle">Overview</div>
+          <div class="dashboard-subtitle" id="dashSubtitle">Welcome back — here's your sourcing snapshot</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="position:relative;">
+          <button class="btn btn-ghost btn-sm" style="font-size:1.2rem;padding:8px 10px;">🔔</button>
+          <div class="notif-dot"></div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openOrderModal()">+ New Order</button>
+        <a href="index.html" class="btn btn-ghost btn-sm">← Back to Site</a>
+      </div>
+    </div>
+
+    <div class="dashboard-content">
+
+      <!-- ===== OVERVIEW ===== -->
+      <div class="tab-panel active" id="panel-overview">
+        <!-- KPI cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon purple">🛒</div>
+            <div class="kpi-number">12</div>
+            <div class="kpi-label">Total Orders (YTD)</div>
+            <div class="kpi-delta up">↑ 4 vs. last quarter</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon gold">📦</div>
+            <div class="kpi-number">3</div>
+            <div class="kpi-label">Active Shipments</div>
+            <div class="kpi-delta up">↑ On-time rate: 98%</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon green">🌾</div>
+            <div class="kpi-number">8,400<span style="font-size:1rem;font-weight:400;"> kg</span></div>
+            <div class="kpi-label">Available Inventory</div>
+            <div class="kpi-delta up">New harvest batch ready</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon blue">📄</div>
+            <div class="kpi-number">5</div>
+            <div class="kpi-label">Pending Documents</div>
+            <div class="kpi-delta down">↓ COA due this week</div>
+          </div>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="ds-title">Quick Actions</div>
+        <div class="qa-grid">
+          <button class="qa-btn" onclick="openOrderModal()"><span class="qa-icon">🛒</span><span class="qa-label">Place Order</span></button>
+          <button class="qa-btn" onclick="switchTab('tracking',document.querySelector('.sidebar-link:nth-child(4))'))"><span class="qa-icon">📍</span><span class="qa-label">Track Shipment</span></button>
+          <button class="qa-btn" onclick="switchTab('documents',null)"><span class="qa-icon">📄</span><span class="qa-label">Download COA</span></button>
+          <button class="qa-btn" onclick="switchTab('ai',null)"><span class="qa-icon">🤖</span><span class="qa-label">Ask Vera AI</span></button>
+        </div>
+
+        <!-- Two column -->
+        <div class="grid-2" style="gap:24px;align-items:start;">
+          <!-- Recent orders -->
+          <div>
+            <div class="ds-title">Recent Orders</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>Order ID</th><th>Product</th><th>Qty</th><th>Status</th><th>Date</th></tr>
+                </thead>
+                <tbody id="recentOrdersBody">
+                  <tr>
+                    <td class="td-strong">VH-2026-042</td>
+                    <td>Ube Powder Grade A</td>
+                    <td>500 kg</td>
+                    <td><span class="badge badge-success badge-dot">Shipped</span></td>
+                    <td style="color:var(--ink-300);font-size:.8rem;">May 12</td>
+                  </tr>
+                  <tr>
+                    <td class="td-strong">VH-2026-039</td>
+                    <td>Frozen Puree</td>
+                    <td>1,200 kg</td>
+                    <td><span class="badge badge-warning badge-dot">Processing</span></td>
+                    <td style="color:var(--ink-300);font-size:.8rem;">May 8</td>
+                  </tr>
+                  <tr>
+                    <td class="td-strong">VH-2026-035</td>
+                    <td>Halaya — Retail Jars</td>
+                    <td>300 units</td>
+                    <td><span class="badge badge-purple badge-dot">Quality Check</span></td>
+                    <td style="color:var(--ink-300);font-size:.8rem;">Apr 30</td>
+                  </tr>
+                  <tr>
+                    <td class="td-strong">VH-2026-028</td>
+                    <td>Ube Powder Grade B</td>
+                    <td>800 kg</td>
+                    <td><span class="badge badge-success badge-dot">Delivered</span></td>
+                    <td style="color:var(--ink-300);font-size:.8rem;">Apr 15</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Activity feed -->
+          <div>
+            <div class="ds-title">Activity Feed</div>
+            <div style="display:flex;flex-direction:column;gap:0;">
+              <div class="timeline">
+                <div class="timeline-item">
+                  <div class="timeline-dot success"></div>
+                  <div class="timeline-date">Today, 09:14</div>
+                  <div class="timeline-title">Shipment VH-2026-042 departed Manila</div>
+                  <div class="timeline-body">ETA: Los Angeles, CA — May 28, 2026</div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot gold"></div>
+                  <div class="timeline-date">Yesterday, 14:30</div>
+                  <div class="timeline-title">COA Ready — Batch #KIN-0512</div>
+                  <div class="timeline-body">Certificate of Analysis uploaded to Document Vault</div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot"></div>
+                  <div class="timeline-date">May 13, 11:00</div>
+                  <div class="timeline-title">Order VH-2026-039 entered processing</div>
+                  <div class="timeline-body">Bohol facility — Kinampay Powder Grade A</div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot gold"></div>
+                  <div class="timeline-date">May 10, 08:45</div>
+                  <div class="timeline-title">New harvest batch available</div>
+                  <div class="timeline-body">8,400 kg Grade A Kinampay ready for orders</div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot success"></div>
+                  <div class="timeline-date">May 5</div>
+                  <div class="timeline-title">Order VH-2026-028 delivered</div>
+                  <div class="timeline-body">800 kg Ube Powder — confirmed received by buyer</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Price chart area -->
+        <div style="margin-top:28px;">
+          <div class="ds-title">Ube Powder Price Trend (Export, USD/kg)</div>
+          <div class="card" style="padding:24px;">
+            <canvas id="priceChart" height="80"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== ORDERS ===== -->
+      <div class="tab-panel" id="panel-orders">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+          <div class="ds-title" style="margin:0;">All Orders</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <select class="form-input form-select" style="width:auto;padding:8px 36px 8px 12px;font-size:.83rem;">
+              <option>All Statuses</option>
+              <option>Processing</option>
+              <option>Quality Check</option>
+              <option>Shipped</option>
+              <option>Delivered</option>
+            </select>
+            <button class="btn btn-primary btn-sm" onclick="openOrderModal()">+ New Order</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Order ID</th><th>Product</th><th>Qty</th><th>Grade</th><th>Batch #</th><th>Status</th><th>Placed</th><th>Est. Delivery</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="td-strong">VH-2026-042</td>
+                <td>Ube Powder</td>
+                <td>500 kg</td>
+                <td><span class="badge badge-gold">Grade A</span></td>
+                <td style="font-size:.78rem;color:var(--ink-300);">KIN-0512</td>
+                <td><span class="badge badge-success badge-dot">Shipped</span></td>
+                <td style="font-size:.8rem;color:var(--ink-300);">May 12</td>
+                <td style="font-size:.8rem;">May 28</td>
+                <td><button class="btn btn-ghost btn-sm" onclick="switchTab('tracking',null)" style="font-size:.78rem;">Track →</button></td>
+              </tr>
+              <tr>
+                <td class="td-strong">VH-2026-039</td>
+                <td>Frozen Puree</td>
+                <td>1,200 kg</td>
+                <td><span class="badge badge-purple">Grade A</span></td>
+                <td style="font-size:.78rem;color:var(--ink-300);">KIN-0508</td>
+                <td><span class="badge badge-warning badge-dot">Processing</span></td>
+                <td style="font-size:.8rem;color:var(--ink-300);">May 8</td>
+                <td style="font-size:.8rem;">Jun 5</td>
+                <td><button class="btn btn-ghost btn-sm" style="font-size:.78rem;">View →</button></td>
+              </tr>
+              <tr>
+                <td class="td-strong">VH-2026-035</td>
+                <td>Halaya Retail</td>
+                <td>300 units</td>
+                <td><span class="badge badge-gold">Premium</span></td>
+                <td style="font-size:.78rem;color:var(--ink-300);">HAL-0430</td>
+                <td><span class="badge badge-purple badge-dot">Quality Check</span></td>
+                <td style="font-size:.8rem;color:var(--ink-300);">Apr 30</td>
+                <td style="font-size:.8rem;">Jun 10</td>
+                <td><button class="btn btn-ghost btn-sm" style="font-size:.78rem;">View →</button></td>
+              </tr>
+              <tr>
+                <td class="td-strong">VH-2026-028</td>
+                <td>Ube Powder</td>
+                <td>800 kg</td>
+                <td><span class="badge badge-success">Grade B</span></td>
+                <td style="font-size:.78rem;color:var(--ink-300);">KIN-0415</td>
+                <td><span class="badge badge-success badge-dot">Delivered</span></td>
+                <td style="font-size:.8rem;color:var(--ink-300);">Apr 15</td>
+                <td style="font-size:.8rem;">May 2 ✓</td>
+                <td><button class="btn btn-ghost btn-sm" style="font-size:.78rem;">Receipt →</button></td>
+              </tr>
+              <tr>
+                <td class="td-strong">VH-2026-021</td>
+                <td>Ube Extract</td>
+                <td>50 L</td>
+                <td><span class="badge badge-gold">Food Grade</span></td>
+                <td style="font-size:.78rem;color:var(--ink-300);">EXT-0380</td>
+                <td><span class="badge badge-success badge-dot">Delivered</span></td>
+                <td style="font-size:.8rem;color:var(--ink-300);">Mar 28</td>
+                <td style="font-size:.8rem;">Apr 18 ✓</td>
+                <td><button class="btn btn-ghost btn-sm" style="font-size:.78rem;">Receipt →</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== TRACKING ===== -->
+      <div class="tab-panel" id="panel-tracking">
+        <div class="ds-title">Active Shipments</div>
+
+        <div class="track-card">
+          <div class="track-header">
+            <div>
+              <div class="track-id">VH-2026-042 — Ube Powder Grade A</div>
+              <div style="font-size:.8rem;color:var(--ink-300);margin-top:4px;">500 kg · Batch KIN-0512 · Bohol → Los Angeles, USA</div>
+            </div>
+            <span class="badge badge-success badge-dot">In Transit</span>
+          </div>
+          <div class="track-steps">
+            <div class="track-step done">
+              <div class="track-dot">✓</div>
+              <div class="track-step-label">Harvested</div>
+            </div>
+            <div class="track-step done">
+              <div class="track-dot">✓</div>
+              <div class="track-step-label">Processed</div>
+            </div>
+            <div class="track-step done">
+              <div class="track-dot">✓</div>
+              <div class="track-step-label">Lab Tested</div>
+            </div>
+            <div class="track-step done">
+              <div class="track-dot">✓</div>
+              <div class="track-step-label">Packed</div>
+            </div>
+            <div class="track-step active">
+              <div class="track-dot">✈</div>
+              <div class="track-step-label">In Transit</div>
+            </div>
+            <div class="track-step">
+              <div class="track-dot">📦</div>
+              <div class="track-step-label">Delivered</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid var(--paper-2);">
+            <div><div style="font-size:.7rem;color:var(--ink-300);text-transform:uppercase;letter-spacing:.06em;font-weight:700;">Carrier</div><div style="font-weight:600;font-size:.9rem;">Philippine Airlines Cargo</div></div>
+            <div><div style="font-size:.7rem;color:var(--ink-300);text-transform:uppercase;letter-spacing:.06em;font-weight:700;">AWB Number</div><div style="font-weight:600;font-size:.9rem;">079-52847163</div></div>
+            <div><div style="font-size:.7rem;color:var(--ink-300);text-transform:uppercase;letter-spacing:.06em;font-weight:700;">ETA</div><div style="font-weight:600;font-size:.9rem;color:var(--success);">May 28, 2026</div></div>
+          </div>
+        </div>
+
+        <div class="track-card">
+          <div class="track-header">
+            <div>
+              <div class="track-id">VH-2026-039 — Frozen Ube Puree</div>
+              <div style="font-size:.8rem;color:var(--ink-300);margin-top:4px;">1,200 kg · Batch KIN-0508 · Bohol → Tokyo, Japan</div>
+            </div>
+            <span class="badge badge-warning badge-dot">Processing</span>
+          </div>
+          <div class="track-steps">
+            <div class="track-step done">
+              <div class="track-dot">✓</div>
+              <div class="track-step-label">Harvested</div>
+            </div>
+            <div class="track-step active">
+              <div class="track-dot">⚙</div>
+              <div class="track-step-label">Processing</div>
+            </div>
+            <div class="track-step">
+              <div class="track-dot">🧪</div>
+              <div class="track-step-label">Lab Tested</div>
+            </div>
+            <div class="track-step">
+              <div class="track-dot">📦</div>
+              <div class="track-step-label">Packed</div>
+            </div>
+            <div class="track-step">
+              <div class="track-dot">✈</div>
+              <div class="track-step-label">In Transit</div>
+            </div>
+            <div class="track-step">
+              <div class="track-dot">📦</div>
+              <div class="track-step-label">Delivered</div>
+            </div>
+          </div>
+          <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--paper-2);font-size:.82rem;color:var(--ink-300);">
+            ⏱ Est. processing completion: May 20, 2026 · Lab testing begins immediately after · Estimated departure: May 25
+          </div>
+        </div>
+
+        <div class="track-card">
+          <div class="track-header">
+            <div>
+              <div class="track-id">VH-2026-035 — Ube Halaya (Retail)</div>
+              <div style="font-size:.8rem;color:var(--ink-300);margin-top:4px;">300 units · Batch HAL-0430 · Manila → Dubai, UAE</div>
+            </div>
+            <span class="badge badge-purple badge-dot">Quality Check</span>
+          </div>
+          <div class="track-steps">
+            <div class="track-step done"><div class="track-dot">✓</div><div class="track-step-label">Produced</div></div>
+            <div class="track-step done"><div class="track-dot">✓</div><div class="track-step-label">Packaged</div></div>
+            <div class="track-step active"><div class="track-dot">🔬</div><div class="track-step-label">Quality Check</div></div>
+            <div class="track-step"><div class="track-dot">📋</div><div class="track-step-label">Docs Ready</div></div>
+            <div class="track-step"><div class="track-dot">✈</div><div class="track-step-label">In Transit</div></div>
+            <div class="track-step"><div class="track-dot">📦</div><div class="track-step-label">Delivered</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== INVENTORY ===== -->
+      <div class="tab-panel" id="panel-inventory">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+          <div class="ds-title" style="margin:0;">Available Inventory — Ready to Order</div>
+          <span class="badge badge-success badge-dot">Updated: May 16, 2026</span>
+        </div>
+        <div class="grid-3" style="margin-bottom:28px;">
+          <div class="inv-card">
+            <div class="inv-product">Ube Powder — Grade A (Kinampay)</div>
+            <div class="inv-grade">Batch KIN-0512 · Bohol · Milled May 2026</div>
+            <div class="inv-stock">3,500</div>
+            <div class="inv-unit">kg available</div>
+            <div class="inv-bar">
+              <div class="progress-wrap" style="margin:8px 0 12px;">
+                <div class="progress-track"><div class="progress-fill" style="width:70%"></div></div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+              <div>
+                <div style="font-size:.7rem;color:var(--ink-300);text-transform:uppercase;letter-spacing:.06em;font-weight:700;">MOQ</div>
+                <div style="font-size:.85rem;font-weight:600;">100 kg</div>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="openOrderModal('Ube Powder Grade A')">Order Now</button>
+            </div>
+          </div>
+          <div class="inv-card">
+            <div class="inv-product">Ube Powder — Grade B</div>
+            <div class="inv-grade">Batch KIN-0510 · Bohol · Milled May 2026</div>
+            <div class="inv-stock">2,800</div>
+            <div class="inv-unit">kg available</div>
+            <div class="inv-bar">
+              <div class="progress-wrap" style="margin:8px 0 12px;">
+                <div class="progress-track"><div class="progress-fill" style="width:56%"></div></div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+              <div><div style="font-size:.7rem;color:var(--ink-300);text-transform:uppercase;letter-spacing:.06em;font-weight:700;">MOQ</div><div style="font-size:.85rem;font-weight:600;">250 kg</div></div>
+              <button class="btn btn-primary btn-sm" onclick="openOrderModal('Ube Powder Grade B')">Order Now</button>
+            </div>
+          </div>
+          <div class="inv-card">
+            <div class="inv-product">Frozen Ube Puree</div>
+            <div class="inv-grade">Batch KIN-0506 · Bohol · Frozen May 2026</div>
+            <div class="inv-stock">1,200</div>
+            <div class="inv-unit">kg available (cold chain)</div>
+            <div class="inv-bar">
+              <div class="progress-wrap" style="margin:8px 0 12px;">
+                <div class="progress-track"><div class="progress-fill gold" style="width:40%"></div></div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+              <div><div style="font-size:.7rem;color:var(--ink-300);text-transform:uppercase;letter-spacing:.06em;font-weight:700;">MOQ</div><div style="font-size:.85rem;font-weight:600;">200 kg</div></div>
+              <button class="btn btn-primary btn-sm" onclick="openOrderModal('Frozen Ube Puree')">Order Now</button>
+            </div>
+          </div>
+          <div class="inv-card">
+            <div class="inv-product">Ube Halaya — Retail Jars (350g)</div>
+            <div class="inv-grade">Batch HAL-0512 · Manila · May 2026</div>
+            <div class="inv-stock">640</div>
+            <div class="inv-unit">units available</div>
+            <div class="inv-bar">
+              <div class="progress-wrap" style="margin:8px 0 12px;">
+                <div class="progress-track"><div class="progress-fill" style="width:32%"></div></div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+              <div><div style="font-size:.7rem;color:var(--ink-300);text-transform:uppercase;letter-spacing:.06em;font-weight:700;">MOQ</div><div style="font-size:.85rem;font-weight:600;">60 units</div></div>
+              <button class="btn btn-primary btn-sm" onclick="openOrderModal('Ube Halaya Retail')">Order Now</button>
+            </div>
+          </div>
+          <div class="inv-card">
+            <div class="inv-product">Ube Natural Extract</div>
+            <div class="inv-grade">Batch EXT-0490 · Cebu · May 2026</div>
+            <div class="inv-stock">280</div>
+            <div class="inv-unit">litres available</div>
+            <div class="inv-bar">
+              <div class="progress-wrap" style="margin:8px 0 12px;">
+                <div class="progress-track"><div class="progress-fill gold" style="width:56%"></div></div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+              <div><div style="font-size:.7rem;color:var(--ink-300);text-transform:uppercase;letter-spacing:.06em;font-weight:700;">MOQ</div><div style="font-size:.85rem;font-weight:600;">20 L</div></div>
+              <button class="btn btn-primary btn-sm" onclick="openOrderModal('Ube Extract')">Order Now</button>
+            </div>
+          </div>
+          <div class="inv-card" style="border:2px dashed var(--paper-3);background:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;min-height:200px;">
+            <div style="font-size:2rem;">📬</div>
+            <div style="font-weight:600;">Need a custom spec?</div>
+            <div style="font-size:.82rem;color:var(--ink-300);">Particle size, moisture level, packaging, private label</div>
+            <button class="btn btn-outline btn-sm" onclick="switchTab('ai',null)">Ask Vera AI →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== DOCUMENTS ===== -->
+      <div class="tab-panel" id="panel-documents">
+        <div class="ds-title">Document Vault</div>
+        <div class="tabs">
+          <button class="tab-btn active" onclick="filterDocs('all',this)">All Documents</button>
+          <button class="tab-btn" onclick="filterDocs('coa',this)">COA</button>
+          <button class="tab-btn" onclick="filterDocs('compliance',this)">Compliance</button>
+          <button class="tab-btn" onclick="filterDocs('shipping',this)">Shipping</button>
+        </div>
+        <div id="docList">
+          <div class="doc-item" data-type="coa">
+            <div class="doc-icon">🧬</div>
+            <div>
+              <div class="doc-name">COA — Batch KIN-0512 (Ube Powder Grade A)</div>
+              <div class="doc-meta">PDF · 245 KB · Issued May 14, 2026 · Expires May 2027</div>
+            </div>
+            <span class="badge badge-success" style="margin-right:8px;">New</span>
+            <button class="btn btn-outline btn-sm doc-dl">⬇ Download</button>
+          </div>
+          <div class="doc-item" data-type="coa">
+            <div class="doc-icon">🧬</div>
+            <div>
+              <div class="doc-name">COA — Batch KIN-0508 (Frozen Puree)</div>
+              <div class="doc-meta">PDF · 218 KB · Issued May 10, 2026</div>
+            </div>
+            <button class="btn btn-outline btn-sm doc-dl">⬇ Download</button>
+          </div>
+          <div class="doc-item" data-type="compliance">
+            <div class="doc-icon">🏭</div>
+            <div>
+              <div class="doc-name">HACCP Certificate — Bohol Processing Facility</div>
+              <div class="doc-meta">PDF · 1.2 MB · Valid 2025–2027</div>
+            </div>
+            <button class="btn btn-outline btn-sm doc-dl">⬇ Download</button>
+          </div>
+          <div class="doc-item" data-type="compliance">
+            <div class="doc-icon">🧬</div>
+            <div>
+              <div class="doc-name">Philippine FDA Registration — Ube Powder</div>
+              <div class="doc-meta">PDF · 890 KB · FDA Cert No. PHF-2024-0381</div>
+            </div>
+            <button class="btn btn-outline btn-sm doc-dl">⬇ Download</button>
+          </div>
+          <div class="doc-item" data-type="shipping">
+            <div class="doc-icon">📋</div>
+            <div>
+              <div class="doc-name">Bill of Lading — VH-2026-042</div>
+              <div class="doc-meta">PDF · 180 KB · AWB 079-52847163</div>
+            </div>
+            <span class="badge badge-success" style="margin-right:8px;">New</span>
+            <button class="btn btn-outline btn-sm doc-dl">⬇ Download</button>
+          </div>
+          <div class="doc-item" data-type="compliance">
+            <div class="doc-icon">⚠️</div>
+            <div>
+              <div class="doc-name">Allergen Declaration — All Products</div>
+              <div class="doc-meta">PDF · 92 KB · Updated Jan 2026</div>
+            </div>
+            <button class="btn btn-outline btn-sm doc-dl">⬇ Download</button>
+          </div>
+          <div class="doc-item" data-type="compliance">
+            <div class="doc-icon">🌿</div>
+            <div>
+              <div class="doc-name">Single-Origin Provenance Certificate — Kinampay Bohol</div>
+              <div class="doc-meta">PDF · 340 KB · Covers batches KIN-0500 to KIN-0520</div>
+            </div>
+            <button class="btn btn-outline btn-sm doc-dl">⬇ Download</button>
+          </div>
+          <div class="doc-item" data-type="shipping">
+            <div class="doc-icon">📦</div>
+            <div>
+              <div class="doc-name">Phytosanitary Certificate — May 2026 Shipments</div>
+              <div class="doc-meta">PDF · 156 KB · Bureau of Plant Industry PH</div>
+            </div>
+            <button class="btn btn-outline btn-sm doc-dl">⬇ Download</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== AI PANEL ===== -->
+      <div class="tab-panel" id="panel-ai">
+        <div class="ds-title">Vera AI — Your Ube Sourcing Assistant</div>
+        <div class="card" style="padding:28px;">
+          <div class="ai-panel">
+            <div class="ai-messages" id="aiMessages"></div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;" id="aiQuickReplies">
+              <button class="quick-reply" onclick="sendAI('What is the current stock of ube powder?')">Check stock</button>
+              <button class="quick-reply" onclick="sendAI('What certifications do you provide?')">Certifications</button>
+              <button class="quick-reply" onclick="sendAI('How do I place a bulk order?')">Bulk ordering</button>
+              <button class="quick-reply" onclick="sendAI('What is the lead time for powder?')">Lead times</button>
+              <button class="quick-reply" onclick="sendAI('Tell me about Kinampay variety')">Kinampay info</button>
+            </div>
+            <div class="ai-input-row">
+              <input type="text" class="ai-input" id="aiInput" placeholder="Ask about products, pricing, traceability, certifications…" onkeydown="if(event.key==='Enter')sendAIMessage()"/>
+              <button class="ai-send" onclick="sendAIMessage()">↑</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== ACCOUNT ===== -->
+      <div class="tab-panel" id="panel-account">
+        <div class="ds-title">Account Settings</div>
+        <div class="grid-2" style="gap:24px;align-items:start;">
+          <div class="card">
+            <div class="h4" style="margin-bottom:20px;">Company Profile</div>
+            <div class="form-group"><label class="form-label">Company Name</label><input type="text" class="form-input" value="Global Buyers Inc."/></div>
+            <div class="form-group"><label class="form-label">Contact Person</label><input type="text" class="form-input" value="James Chen"/></div>
+            <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" value="buyer@veraheritage.com"/></div>
+            <div class="form-group"><label class="form-label">Country</label><select class="form-input form-select"><option selected>United States</option><option>Japan</option><option>China</option></select></div>
+            <button class="btn btn-primary">Save Changes</button>
+          </div>
+          <div class="card">
+            <div class="h4" style="margin-bottom:20px;">Notification Preferences</div>
+            <div style="display:flex;flex-direction:column;gap:16px;">
+              <label style="display:flex;align-items:center;gap:12px;cursor:pointer;">
+                <input type="checkbox" checked style="accent-color:var(--purple-600);width:16px;height:16px;"/>
+                <div><div style="font-weight:600;font-size:.875rem;">Shipment updates</div><div style="font-size:.78rem;color:var(--ink-300);">Status changes for your active orders</div></div>
+              </label>
+              <label style="display:flex;align-items:center;gap:12px;cursor:pointer;">
+                <input type="checkbox" checked style="accent-color:var(--purple-600);width:16px;height:16px;"/>
+                <div><div style="font-weight:600;font-size:.875rem;">New document uploads</div><div style="font-size:.78rem;color:var(--ink-300);">COAs, compliance certs, BOL</div></div>
+              </label>
+              <label style="display:flex;align-items:center;gap:12px;cursor:pointer;">
+                <input type="checkbox" style="accent-color:var(--purple-600);width:16px;height:16px;"/>
+                <div><div style="font-weight:600;font-size:.875rem;">New inventory alerts</div><div style="font-size:.78rem;color:var(--ink-300);">When new harvest batches are available</div></div>
+              </label>
+              <label style="display:flex;align-items:center;gap:12px;cursor:pointer;">
+                <input type="checkbox" style="accent-color:var(--purple-600);width:16px;height:16px;"/>
+                <div><div style="font-weight:600;font-size:.875rem;">Price movement alerts</div><div style="font-size:.78rem;color:var(--ink-300);">When export prices shift by ±5%</div></div>
+              </label>
+            </div>
+            <button class="btn btn-primary" style="margin-top:24px;">Update Preferences</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     ORDER MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="orderModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Place a New Order</div>
+      <button class="modal-close" onclick="closeOrderModal()">✕</button>
+    </div>
+    <form id="orderForm" onsubmit="submitOrder(event)">
+      <div class="form-group">
+        <label class="form-label">Product</label>
+        <select class="form-input form-select" id="orderProduct">
+          <option>Ube Powder — Grade A (Kinampay)</option>
+          <option>Ube Powder — Grade B</option>
+          <option>Frozen Ube Puree</option>
+          <option>Ube Halaya — Retail Jars</option>
+          <option>Ube Natural Extract</option>
+          <option>Fresh Whole Ube (Seasonal)</option>
+        </select>
+      </div>
+      <div class="grid-2" style="gap:16px;">
+        <div class="form-group">
+          <label class="form-label">Quantity (kg / units)</label>
+          <input type="number" class="form-input" placeholder="e.g. 500" min="1"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Grade / Specification</label>
+          <select class="form-input form-select"><option>Grade A — Kinampay</option><option>Grade B — Standard</option><option>Custom Spec</option></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Destination Port</label>
+        <input type="text" class="form-input" placeholder="e.g. Los Angeles, CA — Port of LA"/>
+      </div>
+      <div class="grid-2" style="gap:16px;">
+        <div class="form-group">
+          <label class="form-label">Required Delivery Date</label>
+          <input type="date" class="form-input"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Packaging Preference</label>
+          <select class="form-input form-select"><option>25 kg bags</option><option>50 kg bags</option><option>1 MT bulk bags (FIBC)</option><option>Custom</option></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Certifications Required</label>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;">
+          <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;cursor:pointer;"><input type="checkbox" checked style="accent-color:var(--purple-600);"/> COA</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;cursor:pointer;"><input type="checkbox" checked style="accent-color:var(--purple-600);"/> HACCP</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;cursor:pointer;"><input type="checkbox" checked style="accent-color:var(--purple-600);"/> FDA Cert</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;cursor:pointer;"><input type="checkbox" style="accent-color:var(--purple-600);"/> Organic</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;cursor:pointer;"><input type="checkbox" style="accent-color:var(--purple-600);"/> Phytosanitary</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Special Instructions</label>
+        <textarea class="form-input form-textarea" style="min-height:80px;" placeholder="Custom particle size, moisture specs, label requirements…"></textarea>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:flex-end;">
+        <button type="button" class="btn btn-ghost" onclick="closeOrderModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary btn-lg">Submit Order Request →</button>
+      </div>
+    </form>
+    <div id="orderSuccess" style="display:none;text-align:center;padding:32px 0;">
+      <div style="font-size:3rem;margin-bottom:16px;">✅</div>
+      <div class="h3" style="margin-bottom:8px;">Order Request Submitted!</div>
+      <p class="body-sm text-muted">Our export team will confirm details and pricing within 24 hours. You'll receive an email with your order ID.</p>
+      <button class="btn btn-primary" style="margin-top:24px;" onclick="closeOrderModal()">Back to Dashboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- Chatbot on portal too -->
+<button class="chatbot-trigger" id="chatTrigger" onclick="toggleChat()" title="Chat with Vera AI" style="bottom:28px;right:28px;">
+  <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+</button>
+<div class="chatbot-window" id="chatWindow">
+  <div class="chatbot-head">
+    <div class="chatbot-head-avatar">🌿</div>
+    <div class="chatbot-head-info"><div class="name">Vera AI — Portal</div><div class="status">Logged in as Global Buyers Inc.</div></div>
+    <button class="chatbot-head-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chatbot-messages" id="chatMessages"></div>
+  <div class="chatbot-quick" id="quickReplies">
+    <button class="quick-reply" onclick="sendQuick('Check my order status')">Order status</button>
+    <button class="quick-reply" onclick="sendQuick('What stock is available now?')">Stock check</button>
+    <button class="quick-reply" onclick="sendQuick('I need a COA for my last order')">Get COA</button>
+  </div>
+  <div class="chatbot-input-row">
+    <input type="text" class="chatbot-input" id="chatInput" placeholder="Ask anything…" onkeydown="if(event.key==='Enter')sendChat()"/>
+    <button class="chatbot-send" onclick="sendChat()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+</div>
+
+<script src="js/chatbot.js"></script>
+<script src="js/dashboard.js"></script>
+<script>
+  // Login handler
+  function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const pass  = document.getElementById('loginPass').value;
+    if (email === 'buyer@veraheritage.com' && pass === 'VeraDemo2026') {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('dashboard').classList.add('active');
+      initDashboard();
+    } else {
+      document.getElementById('loginError').style.display = 'block';
+    }
+  }
+  function handleLogout() {
+    document.getElementById('dashboard').classList.remove('active');
+    document.getElementById('loginScreen').style.display = 'flex';
+  }
+
+  function switchTab(name, el) {
+    if (el && el.addEventListener) el.preventDefault && el.preventDefault();
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+    const panel = document.getElementById('panel-' + name);
+    if (panel) panel.classList.add('active');
+    if (el) el.classList && el.classList.add('active');
+
+    const titles = {
+      overview: ['Overview', 'Welcome back — here\'s your sourcing snapshot'],
+      orders: ['Orders', 'Manage and track all your orders'],
+      tracking: ['Shipment Tracking', 'Real-time status of your active shipments'],
+      inventory: ['Available Inventory', 'Current stock ready for immediate ordering'],
+      documents: ['Document Vault', 'All certifications, COAs, and shipping documents'],
+      ai: ['Vera AI Assistant', 'Ask anything about ube sourcing, products, or traceability'],
+      account: ['Account Settings', 'Manage your profile and preferences'],
+    };
+    if (titles[name]) {
+      document.getElementById('dashTitle').textContent = titles[name][0];
+      document.getElementById('dashSubtitle').textContent = titles[name][1];
+    }
+
+    // init AI panel on open
+    if (name === 'ai') initAIPanel();
+    return false;
+  }
+
+  function openOrderModal(product) {
+    if (product) document.getElementById('orderProduct').value = product;
+    document.getElementById('orderModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeOrderModal() {
+    document.getElementById('orderModal').classList.remove('open');
+    document.body.style.overflow = '';
+    document.getElementById('orderForm').style.display = '';
+    document.getElementById('orderSuccess').style.display = 'none';
+  }
+  function submitOrder(e) {
+    e.preventDefault();
+    document.getElementById('orderForm').style.display = 'none';
+    document.getElementById('orderSuccess').style.display = 'block';
+  }
+
+  function filterDocs(type, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    document.querySelectorAll('.doc-item').forEach(item => {
+      item.style.display = (type === 'all' || item.dataset.type === type) ? '' : 'none';
+    });
+  }
+
+  // AI Panel inside dashboard
+  function initAIPanel() {
+    const msgs = document.getElementById('aiMessages');
+    if (msgs.childElementCount === 0) {
+      appendAIMsg('bot', "Hi! I'm Vera AI. I have full context on your account — orders, inventory, certifications, and ube sourcing knowledge. What can I help you with?");
+    }
+  }
+  function appendAIMsg(role, text) {
+    const msgs = document.getElementById('aiMessages');
+    const div = document.createElement('div');
+    div.className = 'chat-msg ' + role;
+    div.innerHTML = `
+      <div class="chat-avatar">${role==='bot'?'🌿':'GB'}</div>
+      <div class="chat-bubble">${text}</div>`;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+  function sendAI(text) {
+    if (!document.getElementById('aiMessages').parentElement.closest('.tab-panel.active')) {
+      switchTab('ai', null);
+      setTimeout(() => sendAI(text), 300);
+      return;
+    }
+    appendAIMsg('user', text);
+    setTimeout(() => appendAIMsg('bot', getBotReply(text)), 900);
+  }
+  function sendAIMessage() {
+    const input = document.getElementById('aiInput');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    appendAIMsg('user', text);
+    setTimeout(() => appendAIMsg('bot', getBotReply(text)), 1000);
+  }
+  document.getElementById('aiInput') && document.getElementById('aiInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') sendAIMessage();
+  });
+</script>
+</body>
+</html>
