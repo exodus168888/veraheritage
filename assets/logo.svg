@@ -1,68 +1,91 @@
-<svg viewBox="0 0 220 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 240" width="220" height="240" role="img" aria-label="Vera Heritage Logo">
   <defs>
-    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#E8C96A"/>
-      <stop offset="45%" style="stop-color:#C9A84C"/>
-      <stop offset="100%" style="stop-color:#9A7220"/>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D4B860"/>
+      <stop offset="100%" stop-color="#7A6018"/>
     </linearGradient>
-    <linearGradient id="goldGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#EACF72"/>
-      <stop offset="100%" style="stop-color:#A87C28"/>
+    <linearGradient id="g2" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#C8A03A"/>
+      <stop offset="100%" stop-color="#8A6820"/>
+    </linearGradient>
+    <linearGradient id="gem" x1="0%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#9868C8"/>
+      <stop offset="100%" stop-color="#4A1878"/>
     </linearGradient>
   </defs>
 
-  <!-- Emblem group centered at 110,100 -->
-  <g transform="translate(110, 100)">
-    <!-- Center flame / droplet (purple) -->
-    <path d="M0,-52 C-5,-35 -8,-18 -8,0 C-8,14 -4,22 0,26 C4,22 8,14 8,0 C8,-18 5,-35 0,-52Z" fill="#6B35A8"/>
+  <!-- ═══ EMBLEM — fan of leaves rising from base, centered x=110 ═══ -->
+  <g transform="translate(110,96)">
 
-    <!-- Top center petal (gold) -->
-    <path d="M0,-72 C-7,-55 -10,-36 -9,-18 C-5,-22 0,-26 0,-26 C0,-26 5,-22 9,-18 C10,-36 7,-55 0,-72Z" fill="url(#goldGrad)"/>
+    <!-- ── Outermost arching bracket strokes ── -->
+    <path d="M -4,2 C -30,-5 -60,-22 -54,-68"
+          stroke="url(#g1)" stroke-width="2.6" fill="none"
+          stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M  4,2 C  30,-5  60,-22  54,-68"
+          stroke="url(#g2)" stroke-width="2.6" fill="none"
+          stroke-linecap="round" stroke-linejoin="round"/>
 
-    <!-- Upper-left petal -->
-    <path d="M0,-40 C-16,-45 -34,-40 -46,-28 C-52,-20 -52,-10 -46,-4 C-38,4 -26,2 -16,-8 C-8,-16 -2,-28 0,-40Z" fill="url(#goldGrad)"/>
+    <!-- ── Outer large filled leaf — left ── -->
+    <path d="M -2,4 C -22,-8 -36,-38 -22,-70
+             C -13,-52 -5,-14 -2,4 Z"
+          fill="url(#g1)"/>
+    <!-- ── Outer large filled leaf — right ── -->
+    <path d="M  2,4 C  22,-8  36,-38  22,-70
+             C  13,-52  5,-14  2,4 Z"
+          fill="url(#g2)"/>
 
-    <!-- Upper-right petal -->
-    <path d="M0,-40 C16,-45 34,-40 46,-28 C52,-20 52,-10 46,-4 C38,4 26,2 16,-8 C8,-16 2,-28 0,-40Z" fill="url(#goldGrad2)"/>
+    <!-- ── Inner medium leaf — left ── -->
+    <path d="M -1,2 C -10,-12 -12,-42 -4,-70
+             C  0,-48  1,-10  -1,2 Z"
+          fill="#C4A03A"/>
+    <!-- ── Inner medium leaf — right ── -->
+    <path d="M  1,2 C  10,-12  12,-42  4,-70
+             C   0,-48 -1,-10   1,2 Z"
+          fill="#B89030"/>
 
-    <!-- Mid-left petal -->
-    <path d="M-8,5 C-22,2 -40,10 -50,24 C-56,34 -54,46 -46,52 C-36,58 -22,52 -14,38 C-6,26 -4,14 -8,5Z" fill="url(#goldGrad)"/>
+    <!-- ── Central stem ── -->
+    <line x1="0" y1="4" x2="0" y2="-76"
+          stroke="#8A6820" stroke-width="2" stroke-linecap="round"/>
 
-    <!-- Mid-right petal -->
-    <path d="M8,5 C22,2 40,10 50,24 C56,34 54,46 46,52 C36,58 22,52 14,38 C6,26 4,14 8,5Z" fill="url(#goldGrad2)"/>
+    <!-- ── Purple teardrop gem at top ── -->
+    <!-- outer gem shape -->
+    <path d="M 0,-88 C -7,-78 -8,-68 -5,-60 C -2,-54 2,-54 5,-60 C 8,-68 7,-78 0,-88 Z"
+          fill="url(#gem)"/>
+    <!-- gem highlight -->
+    <ellipse cx="-2" cy="-80" rx="2" ry="3.5" fill="#C090F0" opacity="0.4"/>
 
-    <!-- Bottom-left leaf -->
-    <path d="M-6,28 C-18,32 -30,44 -32,60 C-33,70 -28,78 -20,78 C-12,78 -4,70 0,56 C0,56 -2,38 -6,28Z" fill="url(#goldGrad)" opacity="0.88"/>
+    <!-- ── Decorative curved base ── -->
+    <path d="M -62,8 Q 0,20 62,8"
+          stroke="url(#g1)" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    <!-- base center dot -->
+    <circle cx="0" cy="4" r="2.8" fill="#9B7D2A"/>
 
-    <!-- Bottom-right leaf -->
-    <path d="M6,28 C18,32 30,44 32,60 C33,70 28,78 20,78 C12,78 4,70 0,56 C0,56 2,38 6,28Z" fill="url(#goldGrad2)" opacity="0.88"/>
-
-    <!-- Bottom center stem-bud -->
-    <path d="M0,60 C-4,68 -4,78 0,84 C4,78 4,68 0,60Z" fill="url(#goldGrad)"/>
-
-    <!-- Small inner ring accent -->
-    <circle cx="0" cy="2" r="10" fill="none" stroke="url(#goldGrad)" stroke-width="1.5" opacity="0.6"/>
-
-    <!-- Center jewel -->
-    <ellipse cx="0" cy="2" rx="5" ry="7" fill="#4A1878"/>
   </g>
+  <!-- ═══ END EMBLEM ═══ -->
 
-  <!-- VERA text -->
-  <text x="110" y="200" text-anchor="middle"
-        font-family="Georgia, 'Times New Roman', serif"
-        font-weight="700"
-        font-size="36"
-        fill="#6B35A8"
-        letter-spacing="6">VERA</text>
+  <!-- ── VERA wordmark ── -->
+  <text
+    x="110" y="162"
+    text-anchor="middle"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="54"
+    font-weight="700"
+    fill="#6B35A8"
+    letter-spacing="6"
+  >VERA</text>
 
-  <!-- HERITAGE text -->
-  <text x="110" y="222" text-anchor="middle"
-        font-family="Georgia, 'Times New Roman', serif"
-        font-weight="400"
-        font-size="11.5"
-        fill="#C9A84C"
-        letter-spacing="7">HERITAGE</text>
+  <!-- ── Gold thin rule ── -->
+  <line x1="58" y1="171" x2="162" y2="171"
+        stroke="#9B7D2A" stroke-width="0.9"/>
 
-  <!-- Thin gold rule under HERITAGE -->
-  <line x1="72" y1="230" x2="148" y2="230" stroke="#C9A84C" stroke-width="0.8" opacity="0.7"/>
+  <!-- ── HERITAGE wordmark ── -->
+  <text
+    x="110" y="190"
+    text-anchor="middle"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="11.5"
+    fill="#9B7D2A"
+    letter-spacing="7"
+  >HERITAGE</text>
+
 </svg>
